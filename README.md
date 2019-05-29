@@ -1,7 +1,7 @@
 ## 前言
 
 - 这是一款学习Flutter时写的WanAndroid客户端应用，仅供练习。
-- [项目地址](https://github.com/FOnlyJack)，如果本项目对于你学习Flutter可帮上忙的话，谢谢start一下哦
+- [项目地址](https://github.com/FOnlyJack/flutter_demo)，如果本项目对于你学习Flutter可帮上忙的话，谢谢start一下哦
 
 ## 环境搭建
 
