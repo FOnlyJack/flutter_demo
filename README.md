@@ -25,7 +25,7 @@
 - 网络请求使用dio，暂时没有封装网络请求和其他的逻辑。
 
 ## 我的主页
- - [掘金](https://juejin.im/user/5b319afee51d455e2c32fb5b/posts)
+ - [掘金](https://juejin.im/user/5874fedd128fe10058366155)
 ## 应用截图
 
 | <img src="/screenshot/02.png" width="280" alt="首页"/> | <img src="/screenshot/03.png" width="280" alt="搜索"/> | <img src="/screenshot/04.png" width="280" alt="搜索详情页"/> |
