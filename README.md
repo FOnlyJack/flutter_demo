@@ -28,7 +28,7 @@
 | :--: | :--: | :--: |
 | 首页 | 搜索 | 搜索详情页 |
 
-| <img src="/screenshot/05.png" width="280" height="498" alt="常用网站"/> | <img src="/screenshot/06.png" width="280" height="498" alt="体系"/> | <img src="/screenshot/07.jpg" width="280" height="498" alt="分享"/> |
+| <img src="/screenshot/05.png" width="280" height="498" alt="常用网站"/> | <img src="/screenshot/06.png" width="280" height="498" alt="体系"/> | <img src="/screenshot/07.png" width="280" height="498" alt="公众号"/> |
 | :--: | :--: | :--: |
 | 常用网站 | 体系 | 公众号 |
 
