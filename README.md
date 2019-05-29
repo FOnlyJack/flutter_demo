@@ -3,10 +3,6 @@
 - 这是一款学习Flutter时写的WanAndroid客户端应用，仅供练习。
 - [项目地址](https://github.com/FOnlyJack/flutter_demo)，如果本项目对于你学习Flutter可帮上忙的话，谢谢start一下哦
 
-## 环境搭建
-
-- 根据[Flutter中文网](https://flutterchina.club/get-started/install)搭建开发环境，使用Android Studio安装Flutter插件，点击pubspec.yaml的package get，然后运行
-
 ##  APP下载
 
 - Android扫描下方二维码下载
