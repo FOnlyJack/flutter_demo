@@ -30,6 +30,8 @@ dependencies:
   cached_network_image: ^0.7.0
   video_player: ^0.10.0+2
   chewie: ^0.9.5
+  flutter_screenutil: ^0.5.1
+  provider: ^3.0.0+1
 
 dev_dependencies:
   json_serializable: ^2.0.0
