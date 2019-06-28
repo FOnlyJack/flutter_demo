@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/OfficalAccountTabBean.dart';
 import 'package:flutter_demo/mode/OfficalAccountTabDetailBean.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';

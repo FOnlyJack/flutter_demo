@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class ArticleDetailPage extends StatefulWidget {

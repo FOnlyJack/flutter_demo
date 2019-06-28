@@ -1,11 +1,11 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 
 class PerfectArcView extends SingleChildRenderObjectWidget {
   final mHeight;
   final mArcHeight; // 圆弧高度
 
-  PerfectArcView({this.mHeight = 300.0, this.mArcHeight = 40});
+  PerfectArcView({this.mHeight = 260.0, this.mArcHeight = 25});
 
   @override
   RenderObject createRenderObject(BuildContext context) {

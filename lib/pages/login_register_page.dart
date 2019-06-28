@@ -5,7 +5,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/pages/register_page.dart';
 import 'package:fluttertoast/fluttertoast.dart';

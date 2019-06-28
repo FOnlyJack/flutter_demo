@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/eventbus/eventBus.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/pages/login_register_page.dart';

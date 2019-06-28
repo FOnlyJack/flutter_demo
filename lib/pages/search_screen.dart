@@ -3,7 +3,7 @@ import 'dart:math';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/HotSearchBean.dart';
 import 'package:flutter_demo/pages/search_detail_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';

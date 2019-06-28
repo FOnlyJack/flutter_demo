@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/eventbus/eventBus.dart';
 import 'package:flutter_demo/pages/my_screen.dart';
 import 'package:flutter_demo/pages/project_screen.dart';
@@ -112,8 +112,7 @@ class BottomNavigationWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil(width: 750, height: 1334)
-      ..init(context);
+    ScreenUtil.instance = ScreenUtil()..init(context);
     return Consumer<BottomCatModel>(
       builder: (context, model, _) {
         return MaterialApp(

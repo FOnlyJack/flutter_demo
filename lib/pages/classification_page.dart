@@ -1,7 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/GlobalConfig.dart';
+import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/mode/SystemBean.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
