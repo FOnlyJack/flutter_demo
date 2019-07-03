@@ -40,7 +40,7 @@ class _ProjectScreenState extends State<ProjectScreen>
   Widget build(BuildContext context) {
     _tabController = TabController(length: _tabName.length, vsync: this);
     return Consumer<BottomCatModel>(
-      builder: (context,model,_){
+      builder: (context, model, _) {
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
@@ -62,21 +62,21 @@ class _ProjectScreenState extends State<ProjectScreen>
             actions: <Widget>[
               InkWell(
                 onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                  Navigator.of(context)
+                      .push(MaterialPageRoute(builder: (context) {
                     return SearchPage();
                   }));
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 15, left: 15),
-                  child:
-                  Icon(Icons.search, color: model.fontColor, size: 20.0),
+                  child: Icon(Icons.search, color: model.fontColor, size: 20.0),
                 ),
               )
             ],
           ),
           body: TabBarView(
             children: _tabName.map((ProjectListTabData item) {
-              return Content(item.id,model);
+              return Content(item.id, model);
             }).toList(),
             controller: _tabController,
           ),
@@ -103,8 +103,9 @@ class _ProjectScreenState extends State<ProjectScreen>
 
 class Content extends StatefulWidget {
   final int id;
-   BottomCatModel model;
-  Content(this.id,this.model);
+  BottomCatModel model;
+
+  Content(this.id, this.model);
 
   @override
   State<StatefulWidget> createState() {
@@ -135,17 +136,19 @@ class _ContentState extends State<Content> {
   }
 
   ///列表左侧图片
-  Widget leftImg(index) {
+  Widget leftImg(index, BottomCatModel model) {
     return Container(
-      width: ScreenUtil().setWidth(330),
-      alignment: Alignment.center,
-      child: CachedNetworkImage(
-        fit: BoxFit.fill,
-        imageUrl: _listPage[index].envelopePic,
-        errorWidget: (context, url, error) => Icon(Icons.error),
-        placeholder: (context, url) => CircularProgressIndicator(),
-      ),
-    );
+        width: ScreenUtil().setWidth(330),
+        alignment: Alignment.center,
+        child: Opacity(
+          opacity: model.dark ? 0.2 : 1,
+          child: CachedNetworkImage(
+            fit: BoxFit.fill,
+            imageUrl: _listPage[index].envelopePic,
+            errorWidget: (context, url, error) => Icon(Icons.error),
+            placeholder: (context, url) => CircularProgressIndicator(),
+          ),
+        ));
   }
 
   ///列表右侧content
@@ -159,7 +162,9 @@ class _ContentState extends State<Content> {
             alignment: Alignment.centerLeft,
             child: Text(
               _listPage[index].title,
-              style: TextStyle(fontSize: ScreenUtil().setSp(38), color: widget.model.fontColor),
+              style: TextStyle(
+                  fontSize: ScreenUtil().setSp(38),
+                  color: widget.model.fontColor),
             ),
           ),
           Expanded(
@@ -169,7 +174,9 @@ class _ContentState extends State<Content> {
                 _listPage[index].desc,
                 maxLines: 3,
                 overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize:  ScreenUtil().setSp(34), color:  widget.model.fontColor),
+                style: TextStyle(
+                    fontSize: ScreenUtil().setSp(34),
+                    color: widget.model.fontColor),
               ),
             ),
           ),
@@ -178,12 +185,15 @@ class _ContentState extends State<Content> {
             children: <Widget>[
               Text(
                 "作者:" + _listPage[index].author,
-                style: TextStyle(fontSize:  ScreenUtil().setSp(34), color:  widget.model.fontColor),
+                style: TextStyle(
+                    fontSize: ScreenUtil().setSp(34),
+                    color: widget.model.fontColor),
               ),
               Expanded(
                 child: Text("时间:" + _listPage[index].niceDate,
-                    style:
-                        TextStyle(fontSize:  ScreenUtil().setSp(34), color:  widget.model.fontColor)),
+                    style: TextStyle(
+                        fontSize: ScreenUtil().setSp(34),
+                        color: widget.model.fontColor)),
               ),
             ],
           )
@@ -205,18 +215,18 @@ class _ContentState extends State<Content> {
               behavior: ScrollOverBehavior(),
               refreshHeader: ClassicsHeader(
                 key: _headerKey,
-                bgColor:  widget.model.dark
-                    ?  widget.model.searchBackgroundColor
+                bgColor: widget.model.dark
+                    ? widget.model.searchBackgroundColor
                     : Colors.transparent,
-                textColor:  widget.model.fontColor,
-                moreInfoColor:  widget.model.fontColor,
+                textColor: widget.model.fontColor,
+                moreInfoColor: widget.model.fontColor,
                 showMore: true,
               ),
               refreshFooter: ClassicsFooter(
                 key: _footerKey,
-                bgColor:  widget.model.searchBackgroundColor,
-                textColor:  widget.model.fontColor,
-                moreInfoColor:  widget.model.fontColor,
+                bgColor: widget.model.searchBackgroundColor,
+                textColor: widget.model.fontColor,
+                moreInfoColor: widget.model.fontColor,
                 showMore: true,
               ),
               child: ListView.builder(
@@ -229,7 +239,7 @@ class _ContentState extends State<Content> {
                     return GestureDetector(
                       child: Card(
                         elevation: 1,
-                        color:  widget.model.cardBackgroundColor,
+                        color: widget.model.cardBackgroundColor,
                         clipBehavior: Clip.antiAlias,
                         margin: EdgeInsets.only(top: 10, left: 5, right: 5),
                         shape: const RoundedRectangleBorder(
@@ -239,7 +249,7 @@ class _ContentState extends State<Content> {
                           child: Center(
                             child: Row(
                               children: <Widget>[
-                                leftImg(index),
+                                leftImg(index, widget.model),
                                 rightContent(index)
                               ],
                             ),
@@ -268,9 +278,9 @@ class _ContentState extends State<Content> {
   getTabData() async {
     _currentIndex = 0;
     int _cid = widget.id;
-    projectTabData(_currentIndex,_cid).then((val){
+    projectTabData(_currentIndex, _cid).then((val) {
       ProjectListTabListDetailBean projectListTabListDetailBean =
-      ProjectListTabListDetailBean.fromJson(val);
+          ProjectListTabListDetailBean.fromJson(val);
       List<Datas> list = projectListTabListDetailBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
@@ -280,12 +290,12 @@ class _ContentState extends State<Content> {
     });
   }
 
-   getMoreTabData() async {
+  getMoreTabData() async {
     _currentIndex++;
     int _cid = widget.id;
-    projectTabData(_currentIndex,_cid).then((val){
+    projectTabData(_currentIndex, _cid).then((val) {
       ProjectListTabListDetailBean projectListTabListDetailBean =
-      ProjectListTabListDetailBean.fromJson(val);
+          ProjectListTabListDetailBean.fromJson(val);
       List<Datas> list = projectListTabListDetailBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {

@@ -246,43 +246,46 @@ Widget _banner(BottomCatModel model) {
           if (snapshot.hasData) {
             List<HomePageBannerData> bannerListData =
                 HomePageBannerBean.fromJson(snapshot.data).data;
-            return Container(
-              margin: EdgeInsets.only(top: 10),
-              width: ScreenUtil().width,
-              height: ScreenUtil().setHeight(450),
-              child: RefreshSafeArea(
-                child: Swiper(
-                  onTap: (i) {
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return ArticleDetailPage(
-                          title: bannerListData[i].title,
-                          url: bannerListData[i].url);
-                    }));
-                  },
-                  autoplayDisableOnInteraction: true,
-                  controller: SwiperController(),
-                  autoplay: true,
-                  itemBuilder: (BuildContext context, int index) {
-                    return Container(
-                      margin: EdgeInsets.only(left: 20, right: 20),
-                      child: ClipRRect(
-                        child: CachedNetworkImage(
-                          fit: BoxFit.fill,
-                          imageUrl: bannerListData[index].imagePath,
-                          errorWidget: (context, url, error) =>
-                              Icon(Icons.error),
+            return Opacity(
+              opacity: model.dark?0.3:1,
+              child: Container(
+                margin: EdgeInsets.only(top: 10),
+                width: ScreenUtil().width,
+                height: ScreenUtil().setHeight(450),
+                child: RefreshSafeArea(
+                  child: Swiper(
+                    onTap: (i) {
+                      Navigator.of(context)
+                          .push(MaterialPageRoute(builder: (context) {
+                        return ArticleDetailPage(
+                            title: bannerListData[i].title,
+                            url: bannerListData[i].url);
+                      }));
+                    },
+                    autoplayDisableOnInteraction: true,
+                    controller: SwiperController(),
+                    autoplay: true,
+                    itemBuilder: (BuildContext context, int index) {
+                      return Container(
+                        margin: EdgeInsets.only(left: 20, right: 20),
+                        child: ClipRRect(
+                          child: CachedNetworkImage(
+                            fit: BoxFit.fill,
+                            imageUrl: bannerListData[index].imagePath,
+                            errorWidget: (context, url, error) =>
+                                Icon(Icons.error),
+                          ),
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
                         ),
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                    );
-                  },
-                  pagination: SwiperPagination(
-                      builder: DotSwiperPaginationBuilder(
-                    color: model.fontColor,
-                    activeColor: model.cardBackgroundColor,
-                  )),
-                  itemCount: bannerListData.length,
+                      );
+                    },
+                    pagination: SwiperPagination(
+                        builder: DotSwiperPaginationBuilder(
+                          color: model.fontColor,
+                          activeColor: model.cardBackgroundColor,
+                        )),
+                    itemCount: bannerListData.length,
+                  ),
                 ),
               ),
             );
