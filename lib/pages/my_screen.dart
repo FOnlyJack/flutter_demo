@@ -137,12 +137,17 @@ class _MyScreenState extends State<MyScreen> {
                     Switch.adaptive(
                         value: _switchValue,
                         onChanged: (bool) async {
+
+                          print(_switchValue);
+                          print(bool);
+
                           SharedPreferences prefs =
                               await SharedPreferences.getInstance();
-                          prefs.setBool("is_dark", bool);
-                          setState(() {
-                            _switchValue = bool;
-                            Provider.of<BottomCatModel>(context).setNightMode(bool);
+                          prefs.setBool("is_dark", bool).then((_){
+                            setState(() {
+                              _switchValue =bool;
+                              Provider.of<BottomCatModel>(context).setNightMode(!bool);
+                            });
                           });
                         }),
                   ],
@@ -227,6 +232,7 @@ class _MyScreenState extends State<MyScreen> {
     setState(() {
       _islogin = prefs.get("isLogin") ?? false;
       _switchValue = prefs.getBool("is_dark") ?? false;
+      Provider.of<BottomCatModel>(context).setNightMode(!_switchValue);
     });
   }
 }
