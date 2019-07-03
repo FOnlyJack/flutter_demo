@@ -1,7 +1,8 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_demo/eventbus/eventBus.dart';
 import 'package:flutter_demo/mode/NavigationDetailBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
@@ -30,40 +31,44 @@ class _NavigationState extends State<NavigationScreen> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "导航",
-          style: TextStyle(color: GlobalConfig.fontColor),
-        ),
-        actions: <Widget>[
-          InkWell(
-            onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return SearchPage();
-              }));
-            },
-            child: Padding(
-              padding: EdgeInsets.only(right: 15, left: 15),
-              child:
-                  Icon(Icons.search, color: GlobalConfig.fontColor, size: 20.0),
+    return Consumer<BottomCatModel>(
+      builder: (context,model,_){
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              "导航",
+              style: TextStyle(color: model.fontColor),
             ),
-          )
-        ],
-      ),
-      body: SafeArea(
-          child: Offstage(
-        offstage: _listData.length == 0,
-        child: Container(
-          child: Row(
-            children: <Widget>[
-              LeftCategoryNav(_listData),
-              CategoryGoodsList(_listData)
+            actions: <Widget>[
+              InkWell(
+                onTap: () {
+                  Navigator.of(context).push(MaterialPageRoute(builder: (context) {
+                    return SearchPage();
+                  }));
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(right: 15, left: 15),
+                  child:
+                  Icon(Icons.search, color: model.fontColor, size: 20.0),
+                ),
+              )
             ],
           ),
-        ),
-      )),
+          body: SafeArea(
+              child: Offstage(
+                offstage: _listData.length == 0,
+                child: Container(
+                  child: Row(
+                    children: <Widget>[
+                      LeftCategoryNav(_listData,model),
+                      CategoryGoodsList(_listData,model)
+                    ],
+                  ),
+                ),
+              )),
+        );
+      },
     );
   }
 
@@ -86,8 +91,8 @@ class _NavigationState extends State<NavigationScreen> {
  */
 class CategoryGoodsList extends StatefulWidget {
   List<Data> _rightNavData;
-
-  CategoryGoodsList(this._rightNavData);
+  BottomCatModel model;
+  CategoryGoodsList(this._rightNavData,  this.model);
 
   @override
   State<StatefulWidget> createState() {
@@ -132,7 +137,7 @@ class _CategoryRightState extends State<CategoryGoodsList> {
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
                                 fontSize: ScreenUtil().setSp(36),
-                                color: GlobalConfig.fontColor,
+                                color:widget.model.fontColor,
                                 fontWeight: FontWeight.bold)),
                       )
                     ],
@@ -148,7 +153,7 @@ class _CategoryRightState extends State<CategoryGoodsList> {
                           random.nextInt(255),
                           random.nextInt(255),
                           random.nextInt(255),
-                          GlobalConfig.dark ? 0.2 : 1);
+                          widget.model.dark ? 0.2 : 1);
                       return FlatButton(
                         onPressed: () => {
                               Navigator.of(context)
@@ -163,11 +168,11 @@ class _CategoryRightState extends State<CategoryGoodsList> {
                         child: Text(
                           widget._rightNavData[_leftIndex].articles[i].title,
                           style: TextStyle(
-                              fontSize: ScreenUtil().setSp(32), color: GlobalConfig.fontColor),
+                              fontSize: ScreenUtil().setSp(32), color: widget.model.fontColor),
                           overflow: TextOverflow.ellipsis,
                         ),
                         color: _color,
-                        textColor: GlobalConfig.fontColor,
+                        textColor: widget.model.fontColor,
                         shape: RoundedRectangleBorder(
                             side: BorderSide(
                               color: _color,
@@ -188,8 +193,8 @@ class _CategoryRightState extends State<CategoryGoodsList> {
  */
 class LeftCategoryNav extends StatefulWidget {
   List<Data> _leftNavData;
-
-  LeftCategoryNav(this._leftNavData);
+  BottomCatModel model;
+  LeftCategoryNav(this._leftNavData,  this.model);
 
   @override
   State<StatefulWidget> createState() {
@@ -225,13 +230,13 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
               height: ScreenUtil().setHeight(130),
               decoration: BoxDecoration(
                   color: isClick
-                      ? GlobalConfig.searchBackgroundColor
-                      : GlobalConfig.cardBackgroundColor,
+                      ? widget.model.searchBackgroundColor
+                      : widget.model.cardBackgroundColor,
                   border: Border(
                       bottom: BorderSide(width: 1, color: Colors.black12))),
               child: Text(
                 widget._leftNavData[index].name,
-                style: TextStyle(fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
+                style: TextStyle(fontSize: ScreenUtil().setSp(36), color: widget.model.fontColor),
               ),
             ),
           );

@@ -4,7 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -55,11 +56,15 @@ class _RegisterState extends State<RegisterPage> with TickerProviderStateMixin {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: Scaffold(
-          backgroundColor: Colors.grey.withOpacity(0.2),
-          body: Stack(
-            children: <Widget>[imageLayerMask(), regist()],
-          ),
+        child: Consumer<BottomCatModel>(
+          builder: (context,model,_){
+            return Scaffold(
+              backgroundColor: Colors.grey.withOpacity(0.2),
+              body: Stack(
+                children: <Widget>[imageLayerMask(), regist(model)],
+              ),
+            );
+          },
         ),
         onWillPop: _requestPop);
   }
@@ -193,7 +198,7 @@ class _RegisterState extends State<RegisterPage> with TickerProviderStateMixin {
   }
 
   ///注册按钮
-  Widget registButton() {
+  Widget registButton(BottomCatModel model) {
     return Container(
       margin: EdgeInsets.only(bottom: 50),
       child: Column(
@@ -277,8 +282,8 @@ class _RegisterState extends State<RegisterPage> with TickerProviderStateMixin {
                       "注册",
                       style: TextStyle(
                         fontSize: ScreenUtil().setSp(40),
-                          color: GlobalConfig.dark
-                              ? GlobalConfig.fontColor
+                          color: model.dark
+                              ? model.fontColor
                               : Colors.white),
                     ),
                   )),
@@ -290,7 +295,7 @@ class _RegisterState extends State<RegisterPage> with TickerProviderStateMixin {
   }
 
   ///注册组件
-  Widget regist() {
+  Widget regist(BottomCatModel model) {
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: Stack(
@@ -303,7 +308,7 @@ class _RegisterState extends State<RegisterPage> with TickerProviderStateMixin {
               againInputPassword()
             ],
           ),
-          registButton(),
+          registButton(model),
         ],
       ),
     );

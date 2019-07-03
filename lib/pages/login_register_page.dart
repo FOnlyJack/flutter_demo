@@ -5,7 +5,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/register_page.dart';
@@ -88,34 +89,38 @@ class _LoginRegisterState extends State<LoginRegisterPage>
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: Scaffold(
-          backgroundColor: Colors.grey.withOpacity(0.2),
-          body: Stack(
-            children: <Widget>[
-              Offstage(
-                offstage: false,
-                child: vedio(),
+        child: Consumer<BottomCatModel>(
+          builder: (context,model,_){
+            return Scaffold(
+              backgroundColor: Colors.grey.withOpacity(0.2),
+              body: Stack(
+                children: <Widget>[
+                  Offstage(
+                    offstage: false,
+                    child: vedio(model),
+                  ),
+                  BackdropFilter(
+                    filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                    child: new Container(
+                      color: Colors.black.withOpacity(0.6),
+                    ),
+                  ),
+                  AnimatedCrossFade(
+                      firstChild: vedio(model),
+                      secondChild: login(model),
+                      crossFadeState: isShowLogin
+                          ? CrossFadeState.showFirst
+                          : CrossFadeState.showSecond,
+                      duration: Duration(seconds: 1)),
+                ],
               ),
-              BackdropFilter(
-                filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                child: new Container(
-                  color: Colors.black.withOpacity(0.6),
-                ),
-              ),
-              AnimatedCrossFade(
-                  firstChild: vedio(),
-                  secondChild: login(),
-                  crossFadeState: isShowLogin
-                      ? CrossFadeState.showFirst
-                      : CrossFadeState.showSecond,
-                  duration: Duration(seconds: 1)),
-            ],
-          ),
+            );
+          },
         ),
         onWillPop: _requestPop);
   }
 
-  Widget vedio() {
+  Widget vedio(BottomCatModel model) {
     return SingleChildScrollView(
       child: Stack(
         children: <Widget>[
@@ -175,8 +180,8 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                               child: Text(
                                 "QQ登录",
                                 style: TextStyle(
-                                    color: GlobalConfig.dark
-                                        ? GlobalConfig.fontColor
+                                    color: model.dark
+                                        ? model.fontColor
                                         : Colors.white),
                               ),
                             ))
@@ -245,8 +250,8 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                             child: Text(
                               "微信登录",
                               style: TextStyle(
-                                  color: GlobalConfig.dark
-                                      ? GlobalConfig.fontColor
+                                  color: model.dark
+                                      ? model.fontColor
                                       : Colors.white),
                             ),
                           ))
@@ -328,8 +333,8 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                 child: Text(
                                   "普通账号登录",
                                   style: TextStyle(
-                                      color: GlobalConfig.dark
-                                          ? GlobalConfig.fontColor
+                                      color: model.dark
+                                          ? model.fontColor
                                           : Colors.white),
                                 ),
                               ))
@@ -371,7 +376,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
     );
   }
 
-  Widget login() {
+  Widget login(BottomCatModel model) {
     return Container(
       margin: EdgeInsets.only(top: 20),
       child: Stack(
@@ -534,8 +539,8 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                           child: Text(
                             "登录",
                             style: TextStyle(
-                                color: GlobalConfig.dark
-                                    ? GlobalConfig.fontColor
+                                color: model.dark
+                                    ? model.fontColor
                                     : Colors.white),
                           ),
                         )),

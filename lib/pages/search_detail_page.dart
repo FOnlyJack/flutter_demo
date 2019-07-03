@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
@@ -39,7 +40,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
     search(0, false);
   }
   ///搜索结果列表
-  Widget _searchresult(_list){
+  Widget _searchresult(_list, BottomCatModel model){
     return ListView.builder(
       //ListView的Item
         physics: new BouncingScrollPhysics(),
@@ -49,7 +50,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
           return GestureDetector(
             child: Card(
               elevation: 1,
-              color: GlobalConfig.cardBackgroundColor,
+              color: model.cardBackgroundColor,
               clipBehavior: Clip.antiAlias,
               margin: EdgeInsets.only(top: 10, left: 5, right: 5),
               shape: const RoundedRectangleBorder(
@@ -70,7 +71,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                               "作者:" + _list[index].author,
                               style: TextStyle(
                                   fontSize: ScreenUtil().setSp(35),
-                                  color: GlobalConfig.fontColor),
+                                  color: model.fontColor),
                             ),
                           )),
                       Padding(
@@ -78,7 +79,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                           Icons.favorite,
                           color: _list[index].collect
                               ? Colors.red
-                              : GlobalConfig.fontColor,
+                              : model.fontColor,
                         ),
                         padding: EdgeInsets.only(right: 5, top: 4),
                       )
@@ -89,7 +90,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                       _list[index].title,
                       style: TextStyle(
                           fontSize: ScreenUtil().setSp(44),
-                          color: GlobalConfig.fontColor,
+                          color: model.fontColor,
                           fontWeight: FontWeight.bold),
                     ),
                     padding:
@@ -104,7 +105,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                           _list[index].chapterName,
                       style: TextStyle(
                           fontSize: ScreenUtil().setSp(40),
-                          color: GlobalConfig.fontColor),
+                          color: model.fontColor),
                     ),
                   ),
                   Padding(
@@ -113,7 +114,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                       "时间:" + _list[index].niceDate,
                       style: TextStyle(
                           fontSize: ScreenUtil().setSp(40),
-                          color: GlobalConfig.fontColor),
+                          color: model.fontColor),
                     ),
                   )
                 ],
@@ -135,44 +136,48 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child: Scaffold(
-          appBar: AppBar(
-            title: Text(
-              widget.searchStr,
-              style: TextStyle(color: GlobalConfig.fontColor),
-            ),
-          ),
-          body: Container(
-            width: ScreenUtil().width,
-            height: ScreenUtil().height,
-            child: EasyRefresh(
-              key: _easyRefreshKey,
-              behavior: ScrollOverBehavior(),
-              refreshHeader: ClassicsHeader(
-                key: _headerKey,
-                bgColor: GlobalConfig.dark
-                    ? GlobalConfig.searchBackgroundColor
-                    : Colors.transparent,
-                textColor: GlobalConfig.fontColor,
-                moreInfoColor: GlobalConfig.fontColor,
-                showMore: true,
+        child: Consumer<BottomCatModel>(
+          builder: (context,model,_){
+            return Scaffold(
+              appBar: AppBar(
+                title: Text(
+                  widget.searchStr,
+                  style: TextStyle(color: model.fontColor),
+                ),
               ),
-              refreshFooter: ClassicsFooter(
-                key: _footerKey,
-                bgColor: GlobalConfig.searchBackgroundColor,
-                textColor: GlobalConfig.fontColor,
-                moreInfoColor: GlobalConfig.fontColor,
-                showMore: true,
+              body: Container(
+                width: ScreenUtil().width,
+                height: ScreenUtil().height,
+                child: EasyRefresh(
+                  key: _easyRefreshKey,
+                  behavior: ScrollOverBehavior(),
+                  refreshHeader: ClassicsHeader(
+                    key: _headerKey,
+                    bgColor: model.dark
+                        ? model.searchBackgroundColor
+                        : Colors.transparent,
+                    textColor: model.fontColor,
+                    moreInfoColor: model.fontColor,
+                    showMore: true,
+                  ),
+                  refreshFooter: ClassicsFooter(
+                    key: _footerKey,
+                    bgColor: model.searchBackgroundColor,
+                    textColor: model.fontColor,
+                    moreInfoColor: model.fontColor,
+                    showMore: true,
+                  ),
+                  child: _searchresult(_list,model),
+                  onRefresh: () async {
+                    search(0, false);
+                  },
+                  loadMore: () async {
+                    search(_page == 0 ? _page + 1 : _page, true);
+                  },
+                ),
               ),
-              child: _searchresult(_list),
-              onRefresh: () async {
-                search(0, false);
-              },
-              loadMore: () async {
-                search(_page == 0 ? _page + 1 : _page, true);
-              },
-            ),
-          ),
+            );
+          },
         ),
         onWillPop: () {
           if (widget.searchStr.isNotEmpty) {

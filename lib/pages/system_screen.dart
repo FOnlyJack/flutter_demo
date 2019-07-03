@@ -1,6 +1,7 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/SystemBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/classification_page.dart';
@@ -33,47 +34,52 @@ class _SystemState extends State<SystemScreen> {
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(
-          "体系",
-          style: TextStyle(color: GlobalConfig.fontColor),
-        ),
-        actions: <Widget>[_rightSearch(context)],
-      ),
-      body: SafeArea(
-          child: Container(
-        width: ScreenUtil().width,
-        height: ScreenUtil().height,
-        child: EasyRefresh(
-          key: _easyRefreshKey,
-          behavior: ScrollOverBehavior(),
-          refreshHeader: ClassicsHeader(
-            key: _headerKey,
-            bgColor: GlobalConfig.dark
-                ? GlobalConfig.searchBackgroundColor
-                : Colors.transparent,
-            textColor: GlobalConfig.fontColor,
-            moreInfoColor: GlobalConfig.fontColor,
-            showMore: true,
+    return Consumer<BottomCatModel>(
+      builder: (context,model,_){
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(
+              "体系",
+              style: TextStyle(color: model.fontColor),
+            ),
+            actions: <Widget>[_rightSearch(context,model)],
           ),
-          refreshFooter: ClassicsFooter(
-            key: _footerKey,
-            bgColor: GlobalConfig.searchBackgroundColor,
-            textColor: GlobalConfig.fontColor,
-            moreInfoColor: GlobalConfig.fontColor,
-            showMore: true,
-          ),
-          child: SystemList(
-            listPage: _data,
-          ),
-          onRefresh: () async {
-            getSystemData();
-          },
-          loadMore: () async {},
-        ),
-      )),
+          body: SafeArea(
+              child: Container(
+                width: ScreenUtil().width,
+                height: ScreenUtil().height,
+                child: EasyRefresh(
+                  key: _easyRefreshKey,
+                  behavior: ScrollOverBehavior(),
+                  refreshHeader: ClassicsHeader(
+                    key: _headerKey,
+                    bgColor: model.dark
+                        ? model.searchBackgroundColor
+                        : Colors.transparent,
+                    textColor: model.fontColor,
+                    moreInfoColor: model.fontColor,
+                    showMore: true,
+                  ),
+                  refreshFooter: ClassicsFooter(
+                    key: _footerKey,
+                    bgColor: model.searchBackgroundColor,
+                    textColor: model.fontColor,
+                    moreInfoColor: model.fontColor,
+                    showMore: true,
+                  ),
+                  child: SystemList(
+                    model:model,
+                    listPage: _data,
+                  ),
+                  onRefresh: () async {
+                    getSystemData();
+                  },
+                  loadMore: () async {},
+                ),
+              )),
+        );
+      },
     );
   }
 
@@ -90,7 +96,7 @@ class _SystemState extends State<SystemScreen> {
 }
 
 ///搜索
-Widget _rightSearch(context) {
+Widget _rightSearch(context, BottomCatModel model) {
   return InkWell(
     onTap: () {
       Navigator.of(context).push(MaterialPageRoute(builder: (context) {
@@ -99,7 +105,7 @@ Widget _rightSearch(context) {
     },
     child: Padding(
       padding: EdgeInsets.only(right: 15, left: 15),
-      child: Icon(Icons.search, color: GlobalConfig.fontColor, size: 20.0),
+      child: Icon(Icons.search, color: model.fontColor, size: 20.0),
     ),
   );
 }
@@ -107,8 +113,8 @@ Widget _rightSearch(context) {
 ///列表
 class SystemList extends StatelessWidget {
   final List listPage;
-
-  SystemList({Key key, this.listPage}) : super(key: key);
+  BottomCatModel model;
+  SystemList({Key key, this.listPage,this.model}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -132,7 +138,7 @@ class SystemList extends StatelessWidget {
                     }))
                   },
               child: Card(
-                color: GlobalConfig.cardBackgroundColor,
+                color: model.cardBackgroundColor,
                 elevation: 5,
                 clipBehavior: Clip.antiAlias,
                 margin: EdgeInsets.all(10),
@@ -145,7 +151,7 @@ class SystemList extends StatelessWidget {
                         style: TextStyle(
                             fontSize: 18,
                             fontWeight: FontWeight.bold,
-                            color: GlobalConfig.fontColor),
+                            color: model.fontColor),
                       ),
                       Padding(
                           padding: EdgeInsets.only(top: 5),
@@ -156,7 +162,7 @@ class SystemList extends StatelessWidget {
                                 return Text(
                                   listPage[index].children[i].name,
                                   style:
-                                      TextStyle(color: GlobalConfig.fontColor),
+                                      TextStyle(color: model.fontColor),
                                 );
                               })))
                     ],

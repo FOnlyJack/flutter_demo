@@ -1,15 +1,16 @@
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
 
 class PerfectArcView extends SingleChildRenderObjectWidget {
   final mHeight;
   final mArcHeight; // 圆弧高度
+  BottomCatModel model;
 
-  PerfectArcView({this.mHeight = 260.0, this.mArcHeight = 25});
+  PerfectArcView({this.model, this.mHeight = 260.0, this.mArcHeight = 25});
 
   @override
   RenderObject createRenderObject(BuildContext context) {
-    return RenderCircle(mArcHeight: mArcHeight, mHeight: mHeight);
+    return RenderCircle(mArcHeight: mArcHeight, mHeight: mHeight, model: model);
   }
 }
 
@@ -25,7 +26,9 @@ class RenderCircle extends RenderBox {
   var mWidth;
   var mHeight;
   var mArcHeight; // 圆弧高度
-  RenderCircle({this.mHeight, this.mArcHeight}) {
+  BottomCatModel model;
+
+  RenderCircle({this.mHeight, this.mArcHeight, this.model}) {
     mPaint = new Paint();
     mPaint.isAntiAlias = true;
     mPaint.strokeWidth = 10;
@@ -41,7 +44,7 @@ class RenderCircle extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     var canvas = context.canvas;
-    mPaint.color =GlobalConfig.dark?GlobalConfig.cardBackgroundColor:Color(0xFF3296F2);
+    mPaint.color = model.dark ? model.cardBackgroundColor : Color(0xFF3296F2);
 
     mPath.reset();
 

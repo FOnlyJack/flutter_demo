@@ -1,12 +1,12 @@
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
-import 'package:flutter_demo/eventbus/eventBus.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/login_register_page.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MyScreen extends StatefulWidget {
@@ -23,34 +23,36 @@ class _MyScreenState extends State<MyScreen> {
 
   @override
   initState() {
-    // TODO: implement initState
     super.initState();
     init();
   }
 
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        centerTitle: true,
-        title: Text(
-          "我的",
-          style: TextStyle(color: GlobalConfig.fontColor),
-        ),
-      ),
-      body: Column(
-        children: <Widget>[
-          _buildHead(),
-          _buildItems(),
-        ],
-      ),
+    return Consumer<BottomCatModel>(
+      builder: (context,val,_){
+        return  Scaffold(
+          appBar: AppBar(
+            elevation: 0,
+            centerTitle: true,
+            title: Text(
+              "我的",
+              style: TextStyle(color: val.fontColor),
+            ),
+          ),
+          body: Column(
+            children: <Widget>[
+              _buildHead(val),
+              _buildItems(val),
+            ],
+          ),
+        );
+      },
     );
   }
 
   //用户头像、用户名
-  _buildHead() {
+  _buildHead(BottomCatModel val) {
     return Stack(
       children: <Widget>[
         Image.network(
@@ -61,7 +63,7 @@ class _MyScreenState extends State<MyScreen> {
               Padding(
                 padding: EdgeInsets.only(top: 60),
                 child: ClipOval(
-                  child: new Image.network(
+                  child:  Image.network(
                     "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558516745155&di=f9b26e1e32576a8a3aaf39b583120e11&imgtype=0&src=http%3A%2F%2Fa4.att.hudong.com%2F45%2F34%2F01300001024098148066342526056_s.jpg",
                     width: ScreenUtil().setWidth(120),
                     height: ScreenUtil().setWidth(120),
@@ -80,7 +82,9 @@ class _MyScreenState extends State<MyScreen> {
                 },
                 child: Text(
                   _islogin ? '已登录' : "未登录",
-                  style: TextStyle(color: GlobalConfig.fontColor, fontSize: ScreenUtil().setSp(44)),
+                  style: TextStyle(
+                      color: val.fontColor,
+                      fontSize: ScreenUtil().setSp(44)),
                 ),
               )
             ],
@@ -90,7 +94,7 @@ class _MyScreenState extends State<MyScreen> {
     );
   }
 
-  _buildItems() {
+  _buildItems(BottomCatModel val) {
     return Column(
       children: <Widget>[
         SizedBox(
@@ -102,7 +106,7 @@ class _MyScreenState extends State<MyScreen> {
               Container(
                 child: Image.asset(
                   'assets/images/theme_icon.png',
-                  color: GlobalConfig.fontColor,
+                  color: val.fontColor,
                   height: ScreenUtil().setHeight(40),
                   width: ScreenUtil().setHeight(40),
                 ),
@@ -113,8 +117,9 @@ class _MyScreenState extends State<MyScreen> {
                 child: Container(
                   child: Text(
                     '选择主题',
-                    style:
-                        TextStyle(fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
+                    style: TextStyle(
+                        fontSize: ScreenUtil().setSp(36),
+                        color: val.fontColor),
                   ),
                   margin: EdgeInsets.only(left: 5),
                 ),
@@ -126,35 +131,18 @@ class _MyScreenState extends State<MyScreen> {
                     Text(
                       '夜间模式',
                       style: TextStyle(
-                          fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
+                          fontSize: ScreenUtil().setSp(36),
+                          color: val.fontColor),
                     ),
                     Switch.adaptive(
                         value: _switchValue,
                         onChanged: (bool) async {
-                          SharedPreferences prefs = await SharedPreferences.getInstance();
-                          prefs.setBool("is_dark",bool );
-                          setState(()  {
-                            _switchValue = !_switchValue;
-                            if (bool) {
-                              GlobalConfig.themeData = ThemeData(
-                                primaryColor: Color(0xff2196f3),
-                                scaffoldBackgroundColor: Color(0xFFEBEBEB),
-                              );
-                              GlobalConfig.searchBackgroundColor =
-                                  Color(0xFFEBEBEB);
-                              GlobalConfig.cardBackgroundColor = Colors.white;
-                              GlobalConfig.fontColor = Colors.black54;
-                              GlobalConfig.dark = false;
-                            } else {
-                              GlobalConfig.themeData = ThemeData.dark();
-                              GlobalConfig.searchBackgroundColor =
-                                  Colors.white10;
-                              GlobalConfig.cardBackgroundColor =
-                                  Color(0xFF222222);
-                              GlobalConfig.fontColor = Colors.white30;
-                              GlobalConfig.dark = true;
-                            }
-                            eventBus.fire(NightPatternEvent(_switchValue));
+                          SharedPreferences prefs =
+                              await SharedPreferences.getInstance();
+                          prefs.setBool("is_dark", bool);
+                          setState(() {
+                            _switchValue = bool;
+                            Provider.of<BottomCatModel>(context).setNightMode(bool);
                           });
                         }),
                   ],
@@ -164,19 +152,19 @@ class _MyScreenState extends State<MyScreen> {
             ],
           ),
           height: ScreenUtil().setHeight(140),
-          color: GlobalConfig.cardBackgroundColor,
+          color: val.cardBackgroundColor,
         ),
         Divider(height: ScreenUtil().setHeight(1)),
         InkWell(
           onTap: () {},
           child: Container(
-            color: GlobalConfig.cardBackgroundColor,
+            color: val.cardBackgroundColor,
             child: Row(
               children: <Widget>[
                 Container(
                   child: Image.asset(
                     'assets/images/about.png',
-                    color: GlobalConfig.fontColor,
+                    color: val.fontColor,
                     height: ScreenUtil().setHeight(40),
                     width: ScreenUtil().setWidth(40),
                   ),
@@ -187,7 +175,8 @@ class _MyScreenState extends State<MyScreen> {
                     child: Text(
                       '关于',
                       style: TextStyle(
-                          fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
+                          fontSize: ScreenUtil().setSp(36),
+                          color: val.fontColor),
                     ),
                     margin: EdgeInsets.only(left: 5),
                   ),
@@ -201,8 +190,7 @@ class _MyScreenState extends State<MyScreen> {
         FlatButton(
           onPressed: () async {
             request("logout").then((val) async {
-              RegisterResultBean register =
-              RegisterResultBean.fromJson(val);
+              RegisterResultBean register = RegisterResultBean.fromJson(val);
               if (register.errorCode != -1) {
                 SharedPreferences prefs = await SharedPreferences.getInstance();
                 prefs.setBool("isLogin", false);
@@ -222,7 +210,7 @@ class _MyScreenState extends State<MyScreen> {
           },
           child: Text("退出"),
           color: Colors.red,
-          textColor: GlobalConfig.fontColor,
+          textColor: val.fontColor,
           shape: RoundedRectangleBorder(
               side: BorderSide(
                 color: Colors.red,
@@ -237,8 +225,8 @@ class _MyScreenState extends State<MyScreen> {
   init() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     setState(() {
-      _islogin = prefs.get("isLogin")??false;
-      _switchValue=  prefs.getBool("is_dark")??false;
+      _islogin = prefs.get("isLogin") ?? false;
+      _switchValue = prefs.getBool("is_dark") ?? false;
     });
   }
 }
