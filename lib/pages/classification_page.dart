@@ -6,7 +6,8 @@ import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:provider/provider.dart';
 class ClassiFicationPage extends StatefulWidget {
   final int cid;
   List<Children> tabName = List();
@@ -46,27 +47,37 @@ class _ClassificationState extends State<ClassiFicationPage>
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        centerTitle: true,
-        title: Text(widget.title),
-        bottom: TabBar(
-            isScrollable: true,
-            controller: _tabController,
-            tabs: _tabName.map((Children item) {
-              return Tab(
-                text: item.name,
+    return Consumer<BottomCatModel>(
+      builder: (context,model,_){
+        return Scaffold(
+          appBar: AppBar(
+            centerTitle: true,
+            title: Text(widget.title,style: TextStyle(
+              color:  model.fontColor
+            ),),
+            bottom: TabBar(
+                isScrollable: true,
+                controller: _tabController,
+                indicatorColor: model.fontColor,
+                labelColor: model.fontColor,
+                unselectedLabelColor: model.fontColor,
+                tabs: _tabName.map((Children item) {
+                  return Tab(
+                    text: item.name,
+                  );
+                }).toList()),
+          ),
+          body: TabBarView(
+            children: _tabName.map((Children item) {
+              return Content(
+                item.id,
+                model
               );
-            }).toList()),
-      ),
-      body: TabBarView(
-        children: _tabName.map((Children item) {
-          return Content(
-            item.id,
-          );
-        }).toList(),
-        controller: _tabController,
-      ),
+            }).toList(),
+            controller: _tabController,
+          ),
+        );
+      },
     );
   }
 
@@ -76,8 +87,8 @@ class _ClassificationState extends State<ClassiFicationPage>
 
 class Content extends StatefulWidget {
   final int id;
-
-  Content(this.id);
+  BottomCatModel model;
+  Content(this.id, this.model);
 
   @override
   State<StatefulWidget> createState() {
@@ -119,16 +130,18 @@ class _ContentState extends State<Content> {
               key: _easyRefreshKey,
               behavior: ScrollOverBehavior(),
               refreshHeader: ClassicsHeader(
-                bgColor: Colors.transparent,
-                textColor: Colors.grey,
-                moreInfoColor: Colors.grey,
+                bgColor:  widget.model.dark
+                    ?  widget.model.searchBackgroundColor
+                    : Colors.transparent,
+                textColor:  widget.model.fontColor,
+                moreInfoColor:  widget.model.fontColor,
                 showMore: true,
                 key: _headerKey,
               ),
               refreshFooter: ClassicsFooter(
-                bgColor: Colors.white,
-                textColor: Colors.grey,
-                moreInfoColor: Colors.grey,
+                bgColor: widget.model.searchBackgroundColor,
+                textColor: widget.model.fontColor,
+                moreInfoColor: widget.model.fontColor,
                 showMore: true,
                 key: _footerKey,
               ),
@@ -141,7 +154,7 @@ class _ContentState extends State<Content> {
                     return GestureDetector(
                       child: Card(
                         elevation: 1,
-                        color: Colors.white70,
+                        color: widget.model.cardBackgroundColor,
                         clipBehavior: Clip.antiAlias,
                         margin: EdgeInsets.only(top: 10, left: 5, right: 5),
                         shape: const RoundedRectangleBorder(
@@ -157,7 +170,7 @@ class _ContentState extends State<Content> {
                                   child: Text(
                                     "作者:" + _listPage[index].author,
                                     style: TextStyle(
-                                        fontSize: ScreenUtil().setSp(28), color: Colors.black87),
+                                        fontSize: ScreenUtil().setSp(28), color: widget.model.fontColor),
                                   ),
                                 )),
                                 Padding(
@@ -165,7 +178,7 @@ class _ContentState extends State<Content> {
                                     Icons.favorite,
                                     color: _listPage[index].collect
                                         ? Colors.red
-                                        : Colors.grey,
+                                        :widget.model.fontColor,
                                   ),
                                   padding: EdgeInsets.only(right: 5, top: 4),
                                 )
@@ -176,7 +189,7 @@ class _ContentState extends State<Content> {
                                 _listPage[index].title,
                                 style: TextStyle(
                                     fontSize: ScreenUtil().setSp(34),
-                                    color: Colors.black,
+                                    color: widget.model.fontColor,
                                     fontWeight: FontWeight.bold),
                               ),
                               padding:
@@ -190,7 +203,7 @@ class _ContentState extends State<Content> {
                                     "/" +
                                     _listPage[index].chapterName,
                                 style: TextStyle(
-                                    fontSize: ScreenUtil().setSp(28), color: Colors.black87),
+                                    fontSize: ScreenUtil().setSp(28), color: widget.model.fontColor),
                               ),
                             ),
                             Padding(
@@ -198,7 +211,7 @@ class _ContentState extends State<Content> {
                               child: Text(
                                 "时间:" + _listPage[index].niceDate,
                                 style: TextStyle(
-                                    fontSize: ScreenUtil().setSp(28), color: Colors.black87),
+                                    fontSize: ScreenUtil().setSp(28), color: widget.model.fontColor),
                               ),
                             )
                           ],
