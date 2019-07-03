@@ -1,11 +1,12 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/OfficalAccountTabBean.dart';
 import 'package:flutter_demo/mode/OfficalAccountTabDetailBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/pages/search_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 /**
  * 公众号
@@ -41,15 +42,16 @@ class _OfficialAccount extends State<OfficialAccountScreen>
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
-        title: Text("公众号",style: TextStyle(
-          color: GlobalConfig.fontColor
-        ),),
+        title: Text(
+          "公众号",
+          style: TextStyle(color: GlobalConfig.fontColor),
+        ),
         bottom: TabBar(
             isScrollable: true,
             controller: _tabController,
-            unselectedLabelColor:  GlobalConfig.fontColor,
-            indicatorColor:  GlobalConfig.fontColor,
-            labelColor:  GlobalConfig.fontColor,
+            unselectedLabelColor: GlobalConfig.fontColor,
+            indicatorColor: GlobalConfig.fontColor,
+            labelColor: GlobalConfig.fontColor,
             tabs: _tabName.map((OfficalAccountTabData item) {
               return Tab(
                 text: item.name,
@@ -65,7 +67,7 @@ class _OfficialAccount extends State<OfficialAccountScreen>
             child: Padding(
               padding: EdgeInsets.only(right: 15, left: 15),
               child:
-              Icon(Icons.search, color: GlobalConfig.fontColor, size: 20.0),
+                  Icon(Icons.search, color: GlobalConfig.fontColor, size: 20.0),
             ),
           )
         ],
@@ -82,18 +84,17 @@ class _OfficialAccount extends State<OfficialAccountScreen>
   @override
   bool get wantKeepAlive => true;
 
-  void initData() async {
-    Dio dio = new Dio();
-    Response response =
-        await dio.get("https://wanandroid.com/wxarticle/chapters/json");
-    OfficalAccountTabBean officalAccountTabBean =
-        OfficalAccountTabBean.fromJson(response.data);
-    List<OfficalAccountTabData> list = officalAccountTabBean.data;
-    if (list != null && list.length > 0) {
-      setState(() {
-        _tabName = list;
-      });
-    }
+   initData() async {
+    request('wxarticle').then((val){
+      OfficalAccountTabBean officalAccountTabBean =
+      OfficalAccountTabBean.fromJson(val);
+      List<OfficalAccountTabData> list = officalAccountTabBean.data;
+      if (list != null && list.length > 0) {
+        setState(() {
+          _tabName = list;
+        });
+      }
+    });
   }
 }
 
@@ -136,8 +137,8 @@ class _ContentState extends State<Content> {
     return SafeArea(
         child: Container(
             margin: EdgeInsets.all(5),
-            width: double.infinity,
-            height: double.infinity,
+            width: ScreenUtil().width,
+            height: ScreenUtil().height,
             child: EasyRefresh(
               key: _easyRefreshKey,
               behavior: ScrollOverBehavior(),
@@ -180,7 +181,8 @@ class _ContentState extends State<Content> {
                                   child: Text(
                                     "作者:" + _listPage[index].author,
                                     style: TextStyle(
-                                        fontSize: 14, color: GlobalConfig.fontColor),
+                                        fontSize: ScreenUtil().setSp(28),
+                                        color: GlobalConfig.fontColor),
                                   ),
                                 )),
                                 Padding(
@@ -198,8 +200,8 @@ class _ContentState extends State<Content> {
                               child: Text(
                                 _listPage[index].title,
                                 style: TextStyle(
-                                    fontSize: 17,
-                                    color:  GlobalConfig.fontColor,
+                                    fontSize: ScreenUtil().setSp(34),
+                                    color: GlobalConfig.fontColor,
                                     fontWeight: FontWeight.bold),
                               ),
                               padding:
@@ -213,7 +215,8 @@ class _ContentState extends State<Content> {
                                     "/" +
                                     _listPage[index].chapterName,
                                 style: TextStyle(
-                                    fontSize: 14, color:  GlobalConfig.fontColor),
+                                    fontSize: ScreenUtil().setSp(28),
+                                    color: GlobalConfig.fontColor),
                               ),
                             ),
                             Padding(
@@ -221,7 +224,8 @@ class _ContentState extends State<Content> {
                               child: Text(
                                 "时间:" + _listPage[index].niceDate,
                                 style: TextStyle(
-                                    fontSize: 14, color:  GlobalConfig.fontColor),
+                                    fontSize: ScreenUtil().setSp(28),
+                                    color: GlobalConfig.fontColor),
                               ),
                             )
                           ],
@@ -249,36 +253,30 @@ class _ContentState extends State<Content> {
   getTabData() async {
     _currentIndex = 0;
     int _cid = widget.id;
-    Dio dio = new Dio();
-    Response response = await dio.get(
-        "https://wanandroid.com/wxarticle/list/$_cid/$_currentIndex/json");
-    if (response != null) {
+    officialTabData(_currentIndex, _cid).then((val) {
       OfficalAccountTabDetailBean officalAccountTabDetailBean =
-          OfficalAccountTabDetailBean.fromJson(response.data);
+          OfficalAccountTabDetailBean.fromJson(val);
       List<Datas> list = officalAccountTabDetailBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
           _listPage = list;
         });
       }
-    }
+    });
   }
 
-  void getMoreTabData() async {
+  getMoreTabData() async {
     _currentIndex++;
     int _cid = widget.id;
-    Dio dio = new Dio();
-    Response response = await dio.get(
-        "https://wanandroid.com/wxarticle/list/$_cid/$_currentIndex/json");
-    if (response != null) {
+    officialTabData(_currentIndex, _cid).then((val) {
       OfficalAccountTabDetailBean officalAccountTabDetailBean =
-          OfficalAccountTabDetailBean.fromJson(response.data);
+          OfficalAccountTabDetailBean.fromJson(val);
       List<Datas> list = officalAccountTabDetailBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
           _listPage.addAll(list);
         });
       }
-    }
+    });
   }
 }

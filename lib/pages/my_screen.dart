@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/eventbus/eventBus.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/login_register_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -61,8 +63,8 @@ class _MyScreenState extends State<MyScreen> {
                 child: ClipOval(
                   child: new Image.network(
                     "https://timgsa.baidu.com/timg?image&quality=80&size=b9999_10000&sec=1558516745155&di=f9b26e1e32576a8a3aaf39b583120e11&imgtype=0&src=http%3A%2F%2Fa4.att.hudong.com%2F45%2F34%2F01300001024098148066342526056_s.jpg",
-                    width: 50,
-                    height: 50,
+                    width: ScreenUtil().setWidth(120),
+                    height: ScreenUtil().setWidth(120),
                   ),
                 ),
               ),
@@ -78,7 +80,7 @@ class _MyScreenState extends State<MyScreen> {
                 },
                 child: Text(
                   _islogin ? '已登录' : "未登录",
-                  style: TextStyle(color: GlobalConfig.fontColor, fontSize: 16),
+                  style: TextStyle(color: GlobalConfig.fontColor, fontSize: ScreenUtil().setSp(44)),
                 ),
               )
             ],
@@ -92,7 +94,7 @@ class _MyScreenState extends State<MyScreen> {
     return Column(
       children: <Widget>[
         SizedBox(
-          height: 5,
+          height: ScreenUtil().setHeight(10),
         ),
         Container(
           child: Row(
@@ -101,8 +103,8 @@ class _MyScreenState extends State<MyScreen> {
                 child: Image.asset(
                   'assets/images/theme_icon.png',
                   color: GlobalConfig.fontColor,
-                  height: 18,
-                  width: 18,
+                  height: ScreenUtil().setHeight(40),
+                  width: ScreenUtil().setHeight(40),
                 ),
                 margin: EdgeInsets.only(left: 15),
               ),
@@ -112,7 +114,7 @@ class _MyScreenState extends State<MyScreen> {
                   child: Text(
                     '选择主题',
                     style:
-                        TextStyle(fontSize: 16, color: GlobalConfig.fontColor),
+                        TextStyle(fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
                   ),
                   margin: EdgeInsets.only(left: 5),
                 ),
@@ -124,7 +126,7 @@ class _MyScreenState extends State<MyScreen> {
                     Text(
                       '夜间模式',
                       style: TextStyle(
-                          fontSize: 12, color: GlobalConfig.fontColor),
+                          fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
                     ),
                     Switch.adaptive(
                         value: _switchValue,
@@ -161,10 +163,10 @@ class _MyScreenState extends State<MyScreen> {
               )),
             ],
           ),
-          height: 50,
+          height: ScreenUtil().setHeight(140),
           color: GlobalConfig.cardBackgroundColor,
         ),
-        Divider(height: 1),
+        Divider(height: ScreenUtil().setHeight(1)),
         InkWell(
           onTap: () {},
           child: Container(
@@ -175,8 +177,8 @@ class _MyScreenState extends State<MyScreen> {
                   child: Image.asset(
                     'assets/images/about.png',
                     color: GlobalConfig.fontColor,
-                    height: 23,
-                    width: 23,
+                    height: ScreenUtil().setHeight(40),
+                    width: ScreenUtil().setWidth(40),
                   ),
                   margin: EdgeInsets.only(left: 15),
                 ),
@@ -185,39 +187,38 @@ class _MyScreenState extends State<MyScreen> {
                     child: Text(
                       '关于',
                       style: TextStyle(
-                          fontSize: 16, color: GlobalConfig.fontColor),
+                          fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
                     ),
                     margin: EdgeInsets.only(left: 5),
                   ),
                 ),
               ],
             ),
-            height: 50,
+            height: ScreenUtil().setHeight(140),
           ),
         ),
         Divider(height: 1),
         FlatButton(
           onPressed: () async {
-            Dio dio = new Dio();
-            Response response =
-                await dio.get("https://www.wanandroid.com/user/logout/json");
-            RegisterResultBean register =
-                RegisterResultBean.fromJson(response.data);
-            if (register.errorCode != -1) {
-              SharedPreferences prefs = await SharedPreferences.getInstance();
-              prefs.setBool("isLogin", false);
-              prefs.setString("user-name", "");
-              prefs.setString("user-pw", "");
-              setState(() {
-                _islogin = false;
-              });
-              Fluttertoast.showToast(
-                msg: "退出成功!",
-                toastLength: Toast.LENGTH_SHORT,
-                gravity: ToastGravity.BOTTOM,
-                timeInSecForIos: 1,
-              );
-            }
+            request("logout").then((val) async {
+              RegisterResultBean register =
+              RegisterResultBean.fromJson(val);
+              if (register.errorCode != -1) {
+                SharedPreferences prefs = await SharedPreferences.getInstance();
+                prefs.setBool("isLogin", false);
+                prefs.setString("user-name", "");
+                prefs.setString("user-pw", "");
+                setState(() {
+                  _islogin = false;
+                });
+                Fluttertoast.showToast(
+                  msg: "退出成功!",
+                  toastLength: Toast.LENGTH_SHORT,
+                  gravity: ToastGravity.BOTTOM,
+                  timeInSecForIos: 1,
+                );
+              }
+            });
           },
           child: Text("退出"),
           color: Colors.red,

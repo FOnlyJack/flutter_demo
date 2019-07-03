@@ -2,12 +2,11 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 
 class ArticleDetailPage extends StatefulWidget {
-   String title;
-   String url;
+  final String title;
+  final String url;
 
   ArticleDetailPage({
     Key key,
@@ -103,14 +102,14 @@ class ArticleDetailPageState extends State<ArticleDetailPage> {
       withJavascript: true,
     ) ;
   }
-
+  ///页面加载进度
   Widget _progressBar() {
     return SizedBox(
       height: loading ? 2 : 0,
       child: LinearProgressIndicator(
         value: loading ? _progress : 1,
         backgroundColor: Color(0xfff3f3f3),
-        valueColor: new AlwaysStoppedAnimation<Color>(Colors.green),
+        valueColor:  AlwaysStoppedAnimation<Color>(Colors.green),
       ),
     );
   }

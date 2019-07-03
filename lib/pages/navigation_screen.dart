@@ -1,14 +1,13 @@
 import 'dart:math';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
-import 'package:flutter_demo/mode/NavigationDetailBean.dart';
 import 'package:flutter_demo/eventbus/eventBus.dart';
+import 'package:flutter_demo/mode/NavigationDetailBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/pages/search_screen.dart';
-import 'package:event_bus/event_bus.dart';
-
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 /**
  * 导航
  */
@@ -68,19 +67,17 @@ class _NavigationState extends State<NavigationScreen> {
     );
   }
 
-  void getNavigationData() async {
-    Dio dio = new Dio();
-    Response response = await dio.get("https://www.wanandroid.com/navi/json");
-    if (response != null) {
+   getNavigationData() async {
+    request('nav').then((val){
       NavigationDetailBean navigationDetailBean =
-          NavigationDetailBean.fromJson(response.data);
+      NavigationDetailBean.fromJson(val);
       List<Data> list = navigationDetailBean.data;
       if (list != null && list.length > 0) {
         setState(() {
           _listData = list;
         });
       }
-    }
+    });
   }
 }
 
@@ -134,7 +131,7 @@ class _CategoryRightState extends State<CategoryGoodsList> {
                         child: Text(widget._rightNavData[_leftIndex].name,
                             overflow: TextOverflow.ellipsis,
                             style: TextStyle(
-                                fontSize: 16,
+                                fontSize: ScreenUtil().setSp(36),
                                 color: GlobalConfig.fontColor,
                                 fontWeight: FontWeight.bold)),
                       )
@@ -166,7 +163,7 @@ class _CategoryRightState extends State<CategoryGoodsList> {
                         child: Text(
                           widget._rightNavData[_leftIndex].articles[i].title,
                           style: TextStyle(
-                              fontSize: 14, color: GlobalConfig.fontColor),
+                              fontSize: ScreenUtil().setSp(32), color: GlobalConfig.fontColor),
                           overflow: TextOverflow.ellipsis,
                         ),
                         color: _color,
@@ -209,7 +206,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Container(
-      width: 100,
+      width: ScreenUtil().setWidth(240),
       decoration: BoxDecoration(
           border: Border(right: BorderSide(width: 1, color: Colors.black12))),
       child: ListView.builder(
@@ -225,7 +222,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
             },
             child: Container(
               alignment: Alignment.center,
-              height: 60,
+              height: ScreenUtil().setHeight(130),
               decoration: BoxDecoration(
                   color: isClick
                       ? GlobalConfig.searchBackgroundColor
@@ -234,7 +231,7 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
                       bottom: BorderSide(width: 1, color: Colors.black12))),
               child: Text(
                 widget._leftNavData[index].name,
-                style: TextStyle(fontSize: 16, color: GlobalConfig.fontColor),
+                style: TextStyle(fontSize: ScreenUtil().setSp(36), color: GlobalConfig.fontColor),
               ),
             ),
           );

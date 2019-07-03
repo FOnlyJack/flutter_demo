@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/CommonWebBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 
 class CommonWebPage extends StatefulWidget {
@@ -69,15 +70,13 @@ class _Common_Web_State extends State<CommonWebPage> {
   }
 
   getCommonWebData() async {
-    Dio dio = new Dio();
-    Response response = await dio.get("https://www.wanandroid.com/friend/json");
-    if (response != null) {
-      CommonWebBean commonWebBean = CommonWebBean.fromJson(response.data);
+    request('commonWeb').then((val){
+      CommonWebBean commonWebBean = CommonWebBean.fromJson(val);
       List<Data> list = commonWebBean.data;
       setState(() {
         _list.clear();
         _list.addAll(list);
       });
-    }
+    });
   }
 }

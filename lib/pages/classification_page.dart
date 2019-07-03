@@ -1,16 +1,16 @@
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/mode/SystemBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ClassiFicationPage extends StatefulWidget {
-  int cid;
+  final int cid;
   List<Children> tabName = List();
-  String title;
+  final String title;
 
   ClassiFicationPage(
       {Key key,
@@ -34,6 +34,7 @@ class _ClassificationState extends State<ClassiFicationPage>
   void initState() {
     super.initState();
     _tabName = widget.tabName;
+    _tabController = TabController(length: _tabName.length, vsync: this);
   }
 
   @override
@@ -45,7 +46,6 @@ class _ClassificationState extends State<ClassiFicationPage>
 
   @override
   Widget build(BuildContext context) {
-    _tabController = TabController(length: _tabName.length, vsync: this);
     return Scaffold(
       appBar: AppBar(
         centerTitle: true,
@@ -99,20 +99,22 @@ class _ContentState extends State<Content> {
     super.initState();
     getTabData();
   }
+
   @override
   void dispose() {
     // TODO: implement dispose
     super.dispose();
     _scrollController?.dispose();
   }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return SafeArea(
         child: Container(
             margin: EdgeInsets.all(5),
-            width: double.infinity,
-            height: double.infinity,
+            width: ScreenUtil().width,
+            height: ScreenUtil().height,
             child: EasyRefresh(
               key: _easyRefreshKey,
               behavior: ScrollOverBehavior(),
@@ -131,7 +133,7 @@ class _ContentState extends State<Content> {
                 key: _footerKey,
               ),
               child: ListView.builder(
-                  physics: new BouncingScrollPhysics(),
+                  physics: BouncingScrollPhysics(),
                   shrinkWrap: true,
                   itemCount: _listPage.length,
                   controller: _scrollController,
@@ -155,7 +157,7 @@ class _ContentState extends State<Content> {
                                   child: Text(
                                     "作者:" + _listPage[index].author,
                                     style: TextStyle(
-                                        fontSize: 14, color: Colors.black87),
+                                        fontSize: ScreenUtil().setSp(28), color: Colors.black87),
                                   ),
                                 )),
                                 Padding(
@@ -173,7 +175,7 @@ class _ContentState extends State<Content> {
                               child: Text(
                                 _listPage[index].title,
                                 style: TextStyle(
-                                    fontSize: 17,
+                                    fontSize: ScreenUtil().setSp(34),
                                     color: Colors.black,
                                     fontWeight: FontWeight.bold),
                               ),
@@ -188,7 +190,7 @@ class _ContentState extends State<Content> {
                                     "/" +
                                     _listPage[index].chapterName,
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87),
+                                    fontSize: ScreenUtil().setSp(28), color: Colors.black87),
                               ),
                             ),
                             Padding(
@@ -196,7 +198,7 @@ class _ContentState extends State<Content> {
                               child: Text(
                                 "时间:" + _listPage[index].niceDate,
                                 style: TextStyle(
-                                    fontSize: 14, color: Colors.black87),
+                                    fontSize: ScreenUtil().setSp(28), color: Colors.black87),
                               ),
                             )
                           ],
@@ -224,36 +226,30 @@ class _ContentState extends State<Content> {
   getTabData() async {
     _currentIndex = 0;
     int _cid = widget.id;
-    Dio dio = new Dio();
-    Response response = await dio.get(
-        "https://www.wanandroid.com/article/list/$_currentIndex/json?cid=$_cid");
-    if (response != null) {
+    systemTabData(_currentIndex, _cid).then((val) {
       HomePageListDataBean homePageListDataBean =
-          HomePageListDataBean.fromJson(response.data);
+          HomePageListDataBean.fromJson(val);
       List<Datas> list = homePageListDataBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
           _listPage = list;
         });
       }
-    }
+    });
   }
 
   void getMoreTabData() async {
     _currentIndex++;
     int _cid = widget.id;
-    Dio dio = new Dio();
-    Response response = await dio.get(
-        "https://www.wanandroid.com/article/list/$_currentIndex/json?cid=$_cid");
-    if (response != null) {
+    systemTabData(_currentIndex, _cid).then((val) {
       HomePageListDataBean homePageListDataBean =
-          HomePageListDataBean.fromJson(response.data);
+          HomePageListDataBean.fromJson(val);
       List<Datas> list = homePageListDataBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
           _listPage.addAll(list);
         });
       }
-    }
+    });
   }
 }

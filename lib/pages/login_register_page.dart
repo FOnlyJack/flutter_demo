@@ -7,7 +7,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/register_page.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
@@ -150,14 +152,14 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                     topLeft: Radius.circular(5),
                                     bottomLeft: Radius.circular(5)),
                               ),
-                              width: 50,
-                              height: 50,
+                              width: ScreenUtil().setWidth(140),
+                              height: ScreenUtil().setHeight(140),
                               alignment: Alignment.center,
                               child: Image.asset(
                                 "assets/images/qq.png",
                                 color: Colors.white54,
-                                width: 30,
-                                height: 30,
+                                width: ScreenUtil().setWidth(60),
+                                height: ScreenUtil().setHeight(60),
                               ),
                             ),
                             Expanded(
@@ -169,7 +171,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                     bottomRight: Radius.circular(5)),
                               ),
                               alignment: Alignment.center,
-                              height: 50,
+                              height: ScreenUtil().setHeight(140),
                               child: Text(
                                 "QQ登录",
                                 style: TextStyle(
@@ -220,14 +222,14 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                   topLeft: Radius.circular(5),
                                   bottomLeft: Radius.circular(5)),
                             ),
-                            width: 50,
-                            height: 50,
+                            width: ScreenUtil().setWidth(140),
+                            height: ScreenUtil().setHeight(140),
                             alignment: Alignment.center,
                             child: Image.asset(
                               "assets/images/weixin.png",
                               color: Colors.white54,
-                              width: 30,
-                              height: 30,
+                              width: ScreenUtil().setWidth(60),
+                              height: ScreenUtil().setHeight(60),
                             ),
                           ),
                           Expanded(
@@ -239,7 +241,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                   bottomRight: Radius.circular(5)),
                             ),
                             alignment: Alignment.center,
-                            height: 50,
+                            height: ScreenUtil().setHeight(140),
                             child: Text(
                               "微信登录",
                               style: TextStyle(
@@ -303,14 +305,14 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                       topLeft: Radius.circular(5),
                                       bottomLeft: Radius.circular(5)),
                                 ),
-                                width: 50,
-                                height: 50,
+                                width: ScreenUtil().setWidth(140),
+                                height: ScreenUtil().setHeight(140),
                                 alignment: Alignment.center,
                                 child: Image.asset(
                                   "assets/images/zhanghao.png",
                                   color: Colors.white54,
-                                  width: 30,
-                                  height: 30,
+                                  width: ScreenUtil().setWidth(60),
+                                  height: ScreenUtil().setHeight(60),
                                 ),
                               ),
                               Expanded(
@@ -322,7 +324,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                       bottomRight: Radius.circular(5)),
                                 ),
                                 alignment: Alignment.center,
-                                height: 50,
+                                height: ScreenUtil().setHeight(140),
                                 child: Text(
                                   "普通账号登录",
                                   style: TextStyle(
@@ -377,19 +379,19 @@ class _LoginRegisterState extends State<LoginRegisterPage>
           Column(
             children: <Widget>[
               Container(
-                height: 50,
+                height: ScreenUtil().setHeight(140),
                 child: Stack(
                   children: <Widget>[
                     Container(
                       alignment: Alignment.center,
-                      height: 50,
+                      height: ScreenUtil().setHeight(140),
                       child: Text(
                         "登录",
                         style: TextStyle(color: Colors.white30),
                       ),
                     ),
                     Container(
-                      height: 50,
+                      height: ScreenUtil().setHeight(140),
                       margin: EdgeInsets.only(left: 10),
                       alignment: Alignment.centerLeft,
                       child: InkWell(
@@ -494,36 +496,29 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                               await SharedPreferences.getInstance();
                           prefs1.setString(PW_KEY, _loginPassword);
 
-                          Dio dio = new Dio();
-                          Options options = new Options();
-                          FormData formData = new FormData.from({
-                            "username": _loginUserName.trim(),
-                            "password": _loginPassword.trim(),
+                          registration('login',
+                              formData: FormData.from({
+                                "username": _loginUserName.trim(),
+                                "password": _loginPassword.trim(),
+                              })).then((val) {
+                            RegisterResultBean register =
+                                RegisterResultBean.fromJson(val);
+                            if (register.errorCode == -1) {
+                              Fluttertoast.showToast(
+                                msg: register.errorMsg,
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIos: 1,
+                              );
+                            } else {
+                              Fluttertoast.showToast(
+                                msg: "登录成功!",
+                                toastLength: Toast.LENGTH_SHORT,
+                                gravity: ToastGravity.BOTTOM,
+                                timeInSecForIos: 1,
+                              ).whenComplete(() => loginSucess());
+                            }
                           });
-
-                          Response response = await dio.post(
-                              "https://www.wanandroid.com/user/login",
-                              data: formData,
-                              options: options);
-
-                          RegisterResultBean register =
-                              RegisterResultBean.fromJson(response.data);
-                          if (register.errorCode == -1) {
-                            Fluttertoast.showToast(
-                              msg: register.errorMsg,
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIos: 1,
-                            );
-                          } else {
-                            Fluttertoast.showToast(
-                              msg: "登录成功!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIos: 1,
-                            );
-                            loginSucess();
-                          }
                         },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5))),
@@ -535,7 +530,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                                 bottomRight: Radius.circular(5)),
                           ),
                           alignment: Alignment.center,
-                          height: 50,
+                          height: ScreenUtil().setHeight(140),
                           child: Text(
                             "登录",
                             style: TextStyle(
