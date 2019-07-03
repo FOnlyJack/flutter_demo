@@ -1,16 +1,15 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/ProjectListTabBean.dart';
 import 'package:flutter_demo/mode/ProjectListTabListDetailBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/pages/search_screen.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/**
- * 项目
- */
+///项目
 class ProjectScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -84,18 +83,16 @@ class _ProjectScreenState extends State<ProjectScreen>
   @override
   bool get wantKeepAlive => true;
 
-  void initData() async {
-    Dio dio = new Dio();
-    Response response =
-        await dio.get("https://www.wanandroid.com/project/tree/json");
-    ProjectListTabBean projectListTabBean =
-        ProjectListTabBean.fromJson(response.data);
-    List<ProjectListTabData> list = projectListTabBean.data;
-    if (list != null && list.length > 0) {
-      setState(() {
-        _tabName = list;
-      });
-    }
+  initData() async {
+    request("projecttab").then((val) {
+      ProjectListTabBean projectListTabBean = ProjectListTabBean.fromJson(val);
+      List<ProjectListTabData> list = projectListTabBean.data;
+      if (list != null && list.length > 0) {
+        setState(() {
+          _tabName = list;
+        });
+      }
+    });
   }
 }
 
@@ -132,14 +129,72 @@ class _ContentState extends State<Content> {
     _scrollController?.dispose();
   }
 
+  ///列表左侧图片
+  Widget leftImg(index) {
+    return Container(
+      width: ScreenUtil().setWidth(330),
+      alignment: Alignment.center,
+      child: CachedNetworkImage(
+        fit: BoxFit.fill,
+        imageUrl: _listPage[index].envelopePic,
+        errorWidget: (context, url, error) => Icon(Icons.error),
+        placeholder: (context, url) => CircularProgressIndicator(),
+      ),
+    );
+  }
+
+  ///列表右侧content
+  Widget rightContent(index) {
+    return Expanded(
+        child: Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        children: <Widget>[
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              _listPage[index].title,
+              style: TextStyle(fontSize: ScreenUtil().setSp(38), color: GlobalConfig.fontColor),
+            ),
+          ),
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerLeft,
+              child: Text(
+                _listPage[index].desc,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize:  ScreenUtil().setSp(34), color: GlobalConfig.fontColor),
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: <Widget>[
+              Text(
+                "作者:" + _listPage[index].author,
+                style: TextStyle(fontSize:  ScreenUtil().setSp(34), color: GlobalConfig.fontColor),
+              ),
+              Expanded(
+                child: Text("时间:" + _listPage[index].niceDate,
+                    style:
+                        TextStyle(fontSize:  ScreenUtil().setSp(34), color: GlobalConfig.fontColor)),
+              ),
+            ],
+          )
+        ],
+      ),
+    ));
+  }
+
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
     return SafeArea(
         child: Container(
             margin: EdgeInsets.all(5),
-            width: double.infinity,
-            height: double.infinity,
+            width: ScreenUtil().width,
+            height: ScreenUtil().height,
             child: EasyRefresh(
               key: _easyRefreshKey,
               behavior: ScrollOverBehavior(),
@@ -160,7 +215,7 @@ class _ContentState extends State<Content> {
                 showMore: true,
               ),
               child: ListView.builder(
-                  physics: new BouncingScrollPhysics(),
+                  physics: BouncingScrollPhysics(),
                   shrinkWrap: true,
                   itemExtent: 180,
                   itemCount: _listPage.length,
@@ -179,71 +234,8 @@ class _ContentState extends State<Content> {
                           child: Center(
                             child: Row(
                               children: <Widget>[
-                                Container(
-                                  width: 100,
-                                  height: 160,
-                                  alignment: Alignment.center,
-                                  child: CachedNetworkImage(
-                                    fit: BoxFit.fill,
-                                    imageUrl: _listPage[index].envelopePic,
-                                    errorWidget: (context, url, error) =>
-                                        Icon(Icons.error),
-                                    placeholder: (context, url) =>
-                                        CircularProgressIndicator(),
-                                  ) ,
-                                )
-                               ,
-                                Expanded(
-                                    child: Padding(
-                                  padding: EdgeInsets.all(10),
-                                  child: Column(
-                                    children: <Widget>[
-                                      Align(
-                                        alignment: Alignment.centerLeft,
-                                        child: Text(
-                                          _listPage[index].title,
-                                          style: TextStyle(
-                                              fontSize: 15,
-                                              color: GlobalConfig.fontColor),
-                                        ),
-                                      ),
-                                      Expanded(
-                                        child: Align(
-                                          alignment: Alignment.centerLeft,
-                                          child: Text(
-                                            _listPage[index].desc,
-                                            maxLines: 3,
-                                            overflow: TextOverflow.ellipsis,
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                color: GlobalConfig.fontColor),
-                                          ),
-                                        ),
-                                      ),
-                                      Row(
-                                        mainAxisAlignment:
-                                            MainAxisAlignment.start,
-                                        children: <Widget>[
-                                          Text(
-                                            "作者:" + _listPage[index].author,
-                                            style: TextStyle(
-                                                fontSize: 13,
-                                                color: GlobalConfig.fontColor),
-                                          ),
-                                          Expanded(
-                                            child: Text(
-                                                "时间:" +
-                                                    _listPage[index].niceDate,
-                                                style: TextStyle(
-                                                    fontSize: 13,
-                                                    color: GlobalConfig
-                                                        .fontColor)),
-                                          ),
-                                        ],
-                                      )
-                                    ],
-                                  ),
-                                ))
+                                leftImg(index),
+                                rightContent(index)
                               ],
                             ),
                           ),
@@ -271,36 +263,30 @@ class _ContentState extends State<Content> {
   getTabData() async {
     _currentIndex = 0;
     int _cid = widget.id;
-    Dio dio = new Dio();
-    Response response = await dio.get(
-        "https://www.wanandroid.com/project/list/$_currentIndex/json?cid=$_cid");
-    if (response != null) {
+    projectTabData(_currentIndex,_cid).then((val){
       ProjectListTabListDetailBean projectListTabListDetailBean =
-          ProjectListTabListDetailBean.fromJson(response.data);
+      ProjectListTabListDetailBean.fromJson(val);
       List<Datas> list = projectListTabListDetailBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
           _listPage = list;
         });
       }
-    }
+    });
   }
 
-  void getMoreTabData() async {
+   getMoreTabData() async {
     _currentIndex++;
     int _cid = widget.id;
-    Dio dio = new Dio();
-    Response response = await dio.get(
-        "https://www.wanandroid.com/project/list/$_currentIndex/json?cid=$_cid");
-    if (response != null) {
+    projectTabData(_currentIndex,_cid).then((val){
       ProjectListTabListDetailBean projectListTabListDetailBean =
-          ProjectListTabListDetailBean.fromJson(response.data);
+      ProjectListTabListDetailBean.fromJson(val);
       List<Datas> list = projectListTabListDetailBean.data.datas;
       if (list != null && list.length > 0) {
         setState(() {
           _listPage.addAll(list);
         });
       }
-    }
+    });
   }
 }

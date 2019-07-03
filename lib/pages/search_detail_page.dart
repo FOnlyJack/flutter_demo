@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SearchDetailPage extends StatefulWidget {
-  String searchStr;
+  final String searchStr;
 
   SearchDetailPage({
     Key key,
@@ -36,19 +38,113 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
     super.initState();
     search(0, false);
   }
-
+  ///搜索结果列表
+  Widget _searchresult(_list){
+    return ListView.builder(
+      //ListView的Item
+        physics: new BouncingScrollPhysics(),
+        shrinkWrap: true,
+        itemCount: _list.length,
+        itemBuilder: (BuildContext context, int index) {
+          return GestureDetector(
+            child: Card(
+              elevation: 1,
+              color: GlobalConfig.cardBackgroundColor,
+              clipBehavior: Clip.antiAlias,
+              margin: EdgeInsets.only(top: 10, left: 5, right: 5),
+              shape: const RoundedRectangleBorder(
+                  borderRadius: BorderRadius.only(
+                      topLeft: Radius.circular(10.0),
+                      topRight: Radius.zero,
+                      bottomLeft: Radius.zero,
+                      bottomRight: Radius.circular(20.0))),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: <Widget>[
+                  Row(
+                    children: <Widget>[
+                      Expanded(
+                          child: Padding(
+                            padding: EdgeInsets.only(left: 10, top: 4),
+                            child: Text(
+                              "作者:" + _list[index].author,
+                              style: TextStyle(
+                                  fontSize: ScreenUtil().setSp(35),
+                                  color: GlobalConfig.fontColor),
+                            ),
+                          )),
+                      Padding(
+                        child: Icon(
+                          Icons.favorite,
+                          color: _list[index].collect
+                              ? Colors.red
+                              : GlobalConfig.fontColor,
+                        ),
+                        padding: EdgeInsets.only(right: 5, top: 4),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    child: Text(
+                      _list[index].title,
+                      style: TextStyle(
+                          fontSize: ScreenUtil().setSp(44),
+                          color: GlobalConfig.fontColor,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    padding:
+                    EdgeInsets.only(left: 10, top: 1, bottom: 1),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, bottom: 4),
+                    child: Text(
+                      "分类:" +
+                          _list[index].superChapterName +
+                          "/" +
+                          _list[index].chapterName,
+                      style: TextStyle(
+                          fontSize: ScreenUtil().setSp(40),
+                          color: GlobalConfig.fontColor),
+                    ),
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(left: 10, bottom: 4),
+                    child: Text(
+                      "时间:" + _list[index].niceDate,
+                      style: TextStyle(
+                          fontSize: ScreenUtil().setSp(40),
+                          color: GlobalConfig.fontColor),
+                    ),
+                  )
+                ],
+              ),
+            ),
+            onTap: () {
+              if (_list != null && _list.length > 0) {
+                Navigator.of(context)
+                    .push(MaterialPageRoute(builder: (context) {
+                  return ArticleDetailPage(
+                      title: _list[index].title,
+                      url: _list[index].link);
+                }));
+              }
+            },
+          );
+        });
+  }
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        child:Scaffold(
+        child: Scaffold(
           appBar: AppBar(
-            title: Text(widget.searchStr,style: TextStyle(
-                color: GlobalConfig.fontColor
-            ),),
+            title: Text(
+              widget.searchStr,
+              style: TextStyle(color: GlobalConfig.fontColor),
+            ),
           ),
           body: Container(
-            width: double.infinity,
-            height: double.infinity,
+            width: ScreenUtil().width,
+            height: ScreenUtil().height,
             child: EasyRefresh(
               key: _easyRefreshKey,
               behavior: ScrollOverBehavior(),
@@ -68,94 +164,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                 moreInfoColor: GlobalConfig.fontColor,
                 showMore: true,
               ),
-              child: ListView.builder(
-                //ListView的Item
-                  physics: new BouncingScrollPhysics(),
-                  shrinkWrap: true,
-                  itemCount: _list.length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return GestureDetector(
-                      child: Card(
-                        elevation: 1,
-                        color: GlobalConfig.cardBackgroundColor,
-                        clipBehavior: Clip.antiAlias,
-                        margin: EdgeInsets.only(top: 10, left: 5, right: 5),
-                        shape: const RoundedRectangleBorder(
-                            borderRadius: BorderRadius.only(
-                                topLeft: Radius.circular(10.0),
-                                topRight: Radius.zero,
-                                bottomLeft: Radius.zero,
-                                bottomRight: Radius.circular(20.0))),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            Row(
-                              children: <Widget>[
-                                Expanded(
-                                    child: Padding(
-                                      padding: EdgeInsets.only(left: 10, top: 4),
-                                      child: Text(
-                                        "作者:" + _list[index].author,
-                                        style: TextStyle(
-                                            fontSize: 14, color: GlobalConfig.fontColor),
-                                      ),
-                                    )),
-                                Padding(
-                                  child: Icon(
-                                    Icons.favorite,
-                                    color: _list[index].collect
-                                        ? Colors.red
-                                        : GlobalConfig.fontColor,
-                                  ),
-                                  padding: EdgeInsets.only(right: 5, top: 4),
-                                )
-                              ],
-                            ),
-                            Padding(
-                              child: Text(
-                                _list[index].title,
-                                style: TextStyle(
-                                    fontSize: 17,
-                                    color:GlobalConfig.fontColor,
-                                    fontWeight: FontWeight.bold),
-                              ),
-                              padding:
-                              EdgeInsets.only(left: 10, top: 1, bottom: 1),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10, bottom: 4),
-                              child: Text(
-                                "分类:" +
-                                    _list[index].superChapterName +
-                                    "/" +
-                                    _list[index].chapterName,
-                                style: TextStyle(
-                                    fontSize: 14, color: GlobalConfig.fontColor),
-                              ),
-                            ),
-                            Padding(
-                              padding: EdgeInsets.only(left: 10, bottom: 4),
-                              child: Text(
-                                "时间:" + _list[index].niceDate,
-                                style: TextStyle(
-                                    fontSize: 14, color: GlobalConfig.fontColor),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                      onTap: () {
-                        if (_list != null && _list.length > 0) {
-                          Navigator.of(context)
-                              .push(MaterialPageRoute(builder: (context) {
-                            return ArticleDetailPage(
-                                title: _list[index].title,
-                                url: _list[index].link);
-                          }));
-                        }
-                      },
-                    );
-                  }),
+              child: _searchresult(_list),
               onRefresh: () async {
                 search(0, false);
               },
@@ -174,32 +183,28 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
 
   search(int index, bool isload) async {
     String str = widget.searchStr;
-
-    Dio dio = new Dio();
-    FormData formData = new FormData.from({
-      "k": str,
-    });
-    Response response = await dio.post(
-        "https://www.wanandroid.com/article/query/$index/json",
-        data: formData);
-    print(response);
-    HomePageListDataBean homePageListDataBean =
-        HomePageListDataBean.fromJson(response.data);
-    Data data = homePageListDataBean.data;
-    List<Datas> list = data.datas;
-    if (list != null && list.length > 0) {
-      if (isload) {
-        setState(() {
-          _list.addAll(list);
-          _page++;
-        });
-      } else {
-        _list.clear();
-        setState(() {
-          _page = 0;
-          _list.addAll(list);
-        });
+    getSearchResult(index,
+        formData: FormData.from({
+          "k": str,
+        })).then((val) {
+      HomePageListDataBean homePageListDataBean =
+          HomePageListDataBean.fromJson(val);
+      Data data = homePageListDataBean.data;
+      List<Datas> list = data.datas;
+      if (list != null && list.length > 0) {
+        if (isload) {
+          setState(() {
+            _list.addAll(list);
+            _page++;
+          });
+        } else {
+          _list.clear();
+          setState(() {
+            _page = 0;
+            _list.addAll(list);
+          });
+        }
       }
-    }
+    });
   }
 }

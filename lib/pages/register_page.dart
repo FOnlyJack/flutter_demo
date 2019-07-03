@@ -6,11 +6,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/config/GlobalConfig.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
-/**
- * 注册
- */
+///注册
+
 class RegisterPage extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -19,30 +20,36 @@ class RegisterPage extends StatefulWidget {
   }
 }
 
-class _RegisterState extends State<RegisterPage>
-    with TickerProviderStateMixin {
-
-
-
+class _RegisterState extends State<RegisterPage> with TickerProviderStateMixin {
   var _registerUserName = "";
   var _registerPassword = "";
   var _registerAgainPassword = "";
 
-
-  final TextEditingController userRegisterController = new TextEditingController();
-  final TextEditingController pwRegisterController = new TextEditingController();
-  final TextEditingController pwAgainRegisterController = new TextEditingController();
+  final TextEditingController userRegisterController =
+      new TextEditingController();
+  final TextEditingController pwRegisterController =
+      new TextEditingController();
+  final TextEditingController pwAgainRegisterController =
+      new TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
   }
 
   @override
   void dispose() {
     super.dispose();
+  }
 
+  ///图片灰色蒙版遮罩
+  Widget imageLayerMask() {
+    return BackdropFilter(
+      filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+      child: new Container(
+        color: Colors.black.withOpacity(0.6),
+      ),
+    );
   }
 
   @override
@@ -51,215 +58,38 @@ class _RegisterState extends State<RegisterPage>
         child: Scaffold(
           backgroundColor: Colors.grey.withOpacity(0.2),
           body: Stack(
-            children: <Widget>[
-              BackdropFilter(
-                filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
-                child: new Container(
-                  color: Colors.black.withOpacity(0.6),
-                ),
-              ),
-              regist()
-            ],
+            children: <Widget>[imageLayerMask(), regist()],
           ),
         ),
         onWillPop: _requestPop);
   }
 
-
-  Widget regist() {
+  ///注册顶部title
+  Widget registrationInput() {
     return Container(
-      margin: EdgeInsets.only(top: 20),
+      height: ScreenUtil().setHeight(130),
       child: Stack(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Container(
-                height: 50,
-                child: Stack(
-                  children: <Widget>[
-                    Container(
-                      alignment: Alignment.center,
-                      height: 50,
-                      child: Text(
-                        "注册",
-                        style: TextStyle(color: Colors.white30),
-                      ),
-                    ),
-                    Container(
-                      height: 50,
-                      margin: EdgeInsets.only(left: 10),
-                      alignment: Alignment.centerLeft,
-                      child: InkWell(
-                        onTap: () {
-                          _requestPop();
-                        },
-                        child: Icon(
-                          Icons.keyboard_backspace,
-                          color: Colors.white30,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: TextField(
-                  onChanged: (String value){
-                    _registerUserName =value;
-                  },
-                  style: TextStyle(color: Colors.white30),
-                  cursorColor: Colors.grey,
-                  controller: userRegisterController,
-                  decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    fillColor: Colors.transparent,
-                    filled: true,
-                    labelText: '账号',
-                    labelStyle: TextStyle(color: Colors.white30),
-                    prefixIcon: Icon(
-                      Icons.book,
-                      color: Colors.white30,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: TextField(
-                  onChanged: (String value){
-                    _registerPassword =value;
-                  },
-                  obscureText: true,
-                  controller: pwRegisterController,
-                  cursorColor: Colors.grey,
-                  style: TextStyle(color: Colors.white30),
-                  decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    fillColor: Colors.transparent,
-                    filled: true,
-                    labelText: '密码',
-                    labelStyle: TextStyle(
-                      color: Colors.white30,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.save,
-                      color: Colors.white30,
-                    ),
-                  ),
-                ),
-              ),
-              Padding(
-                padding: EdgeInsets.only(left: 10, right: 10),
-                child: TextField(
-                  onChanged: (String value){
-                    _registerAgainPassword =value;
-                  },
-                  obscureText: true,
-                  controller: pwAgainRegisterController,
-                  cursorColor: Colors.grey,
-                  style: TextStyle(color: Colors.white30),
-                  decoration: InputDecoration(
-                    enabledBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    focusedBorder: UnderlineInputBorder(
-                        borderSide: BorderSide(color: Colors.white30)),
-                    fillColor: Colors.transparent,
-                    filled: true,
-                    labelText: '再次输入密码',
-                    labelStyle: TextStyle(
-                      color: Colors.white30,
-                    ),
-                    prefixIcon: Icon(
-                      Icons.save,
-                      color: Colors.white30,
-                    ),
-                  ),
-                ),
-              ),
-            ],
+          Container(
+            alignment: Alignment.center,
+            height: ScreenUtil().setHeight(130),
+            child: Text(
+              "注册",
+              style: TextStyle(color: Colors.white30,fontSize: ScreenUtil().setSp(45)),
+            ),
           ),
           Container(
-            margin: EdgeInsets.only(bottom: 50),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              children: <Widget>[
-                Opacity(
-                  opacity: 0.7,
-                  child: Padding(
-                    padding: EdgeInsets.only(left: 15, right: 15),
-                    child: RawMaterialButton(
-                        elevation: 5,
-                        fillColor: Colors.white30,
-                        onPressed: () async{
-
-
-                          if (_registerUserName == null || _registerUserName.length == 0) {
-                            return;
-                          }
-                          if (_registerPassword == null || _registerPassword.length == 0) {
-                            return;
-                          }
-                          if (_registerAgainPassword == null || _registerAgainPassword.length == 0) {
-                            return;
-                          }
-
-                          Dio dio = new Dio();
-                          FormData formData = new FormData.from({
-                            "username": _registerUserName.trim(),
-                            "password": _registerPassword.trim(),
-                            "repassword": _registerAgainPassword.trim()
-                          });
-                          Response response;
-                          response =await dio.post(
-                            "https://www.wanandroid.com/user/register",
-                            data: formData,);
-                          RegisterResultBean register =RegisterResultBean.fromJson(response.data);
-                          if(register.errorCode==-1){
-                            Fluttertoast.showToast(
-                              msg: register.errorMsg,
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIos: 1,
-                            );
-                          }else{
-                            Fluttertoast.showToast(
-                              msg: "注册成功!",
-                              toastLength: Toast.LENGTH_SHORT,
-                              gravity: ToastGravity.BOTTOM,
-                              timeInSecForIos: 1,
-                            );
-                            Navigator.of(context).pop();
-                          }
-                        },
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.all(Radius.circular(5))),
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white30,
-                            borderRadius: BorderRadius.only(
-                                topRight: Radius.circular(5),
-                                bottomRight: Radius.circular(5)),
-                          ),
-                          alignment: Alignment.center,
-                          height: 50,
-                          child: Text(
-                            "注册",
-                            style: TextStyle(
-                                color: GlobalConfig.dark
-                                    ? GlobalConfig.fontColor
-                                    : Colors.white),
-                          ),
-                        )),
-                  ),
-                ),
-              ],
+            height: ScreenUtil().setHeight(130),
+            margin: EdgeInsets.only(left: 10),
+            alignment: Alignment.centerLeft,
+            child: InkWell(
+              onTap: () {
+                _requestPop();
+              },
+              child: Icon(
+                Icons.keyboard_backspace,
+                color: Colors.white30,
+              ),
             ),
           ),
         ],
@@ -267,17 +97,220 @@ class _RegisterState extends State<RegisterPage>
     );
   }
 
-
-
-  Future<bool> _requestPop() {
-    print("requestPop");
-      Navigator.of(context).pop();
-
-    return new Future.value(false);
+  ///账号输入
+  Widget accountEntry() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: TextField(
+        onChanged: (String value) {
+          _registerUserName = value;
+        },
+        style: TextStyle(color: Colors.white30,fontSize: ScreenUtil().setSp(40)),
+        cursorColor: Colors.grey,
+        controller: userRegisterController,
+        decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white30)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white30)),
+          fillColor: Colors.transparent,
+          filled: true,
+          labelText: '账号',
+          labelStyle: TextStyle(color: Colors.white30,fontSize: ScreenUtil().setSp(40)),
+          prefixIcon: Icon(
+            Icons.book,
+            color: Colors.white30,
+          ),
+        ),
+      ),
+    );
   }
 
-  static const USER_NAME_KEY = "user-name";
-  static const PW_KEY = "user-pw";
-  static const USER_BASIC_CODE = "user-basic-code";
+  ///密码输入
+  Widget passwordEntry() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: TextField(
+        onChanged: (String value) {
+          _registerPassword = value;
+        },
+        obscureText: true,
+        controller: pwRegisterController,
+        cursorColor: Colors.grey,
+        style: TextStyle(color: Colors.white30,fontSize: ScreenUtil().setSp(40)),
+        decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white30)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white30)),
+          fillColor: Colors.transparent,
+          filled: true,
+          labelText: '密码',
+          labelStyle: TextStyle(
+            fontSize: ScreenUtil().setSp(40),
+            color: Colors.white30,
+          ),
+          prefixIcon: Icon(
+            Icons.save,
+            color: Colors.white30,
+          ),
+        ),
+      ),
+    );
+  }
 
+  ///再次输入密码
+  Widget againInputPassword() {
+    return Padding(
+      padding: EdgeInsets.only(left: 10, right: 10),
+      child: TextField(
+        onChanged: (String value) {
+          _registerAgainPassword = value;
+        },
+        obscureText: true,
+        controller: pwAgainRegisterController,
+        cursorColor: Colors.grey,
+        style: TextStyle(color: Colors.white30,fontSize: ScreenUtil().setSp(40)),
+        decoration: InputDecoration(
+          enabledBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white30)),
+          focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(color: Colors.white30)),
+          fillColor: Colors.transparent,
+          filled: true,
+          labelText: '再次输入密码',
+          labelStyle: TextStyle(
+            color: Colors.white30,
+            fontSize: ScreenUtil().setSp(40)
+          ),
+          prefixIcon: Icon(
+            Icons.save,
+            color: Colors.white30,
+          ),
+        ),
+      ),
+    );
+  }
+
+  ///注册按钮
+  Widget registButton() {
+    return Container(
+      margin: EdgeInsets.only(bottom: 50),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: <Widget>[
+          Opacity(
+            opacity: 0.7,
+            child: Padding(
+              padding: EdgeInsets.only(left: 15, right: 15),
+              child: RawMaterialButton(
+                  elevation: 5,
+                  fillColor: Colors.white30,
+                  onPressed: () async {
+                    if (_registerUserName == null ||
+                        _registerUserName.length == 0) {
+                      Fluttertoast.showToast(
+                        msg: "请输入账号!",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIos: 1,
+                      );
+                      return;
+                    }
+                    if (_registerPassword == null ||
+                        _registerPassword.length == 0) {
+                      Fluttertoast.showToast(
+                        msg: "请输入密码!",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIos: 1,
+                      );
+                      return;
+                    }
+                    if (_registerAgainPassword == null ||
+                        _registerAgainPassword.length == 0) {
+                      Fluttertoast.showToast(
+                        msg: "请确认密码!",
+                        toastLength: Toast.LENGTH_SHORT,
+                        gravity: ToastGravity.BOTTOM,
+                        timeInSecForIos: 1,
+                      );
+                      return;
+                    }
+                    registration("regist",
+                        formData: FormData.from({
+                          "username": _registerUserName.trim(),
+                          "password": _registerPassword.trim(),
+                          "repassword": _registerAgainPassword.trim()
+                        })).then((val) {
+                      RegisterResultBean register =
+                          RegisterResultBean.fromJson(val);
+                      if (register.errorCode == -1) {
+                        Fluttertoast.showToast(
+                          msg: register.errorMsg,
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIos: 1,
+                        );
+                      } else {
+                        Fluttertoast.showToast(
+                          msg: "注册成功!",
+                          toastLength: Toast.LENGTH_SHORT,
+                          gravity: ToastGravity.BOTTOM,
+                          timeInSecForIos: 1,
+                        ).whenComplete(()=>Navigator.of(context).pop());
+                      }
+                    });
+                  },
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(5))),
+                  child: Container(
+                    decoration: BoxDecoration(
+                      color: Colors.white30,
+                      borderRadius: BorderRadius.only(
+                          topRight: Radius.circular(5),
+                          bottomRight: Radius.circular(5)),
+                    ),
+                    alignment: Alignment.center,
+                    height: ScreenUtil().setHeight(130),
+                    child: Text(
+                      "注册",
+                      style: TextStyle(
+                        fontSize: ScreenUtil().setSp(40),
+                          color: GlobalConfig.dark
+                              ? GlobalConfig.fontColor
+                              : Colors.white),
+                    ),
+                  )),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  ///注册组件
+  Widget regist() {
+    return Container(
+      margin: EdgeInsets.only(top: 20),
+      child: Stack(
+        children: <Widget>[
+          Column(
+            children: <Widget>[
+              registrationInput(),
+              accountEntry(),
+              passwordEntry(),
+              againInputPassword()
+            ],
+          ),
+          registButton(),
+        ],
+      ),
+    );
+  }
+
+  Future<bool> _requestPop() {
+    Navigator.of(context).pop();
+    return new Future.value(false);
+  }
 }
