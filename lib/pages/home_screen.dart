@@ -202,10 +202,7 @@ Widget _barSearch(context, BottomCatModel model) {
             color: Colors.transparent,
             child: InkWell(
               onTap: () {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return CommonWebPage();
-                }));
+                App.router.navigateTo(context, Routers.commonweb);
               },
               child: Container(
                 margin: EdgeInsets.only(right: 15, left: 15),

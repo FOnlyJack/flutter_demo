@@ -4,6 +4,8 @@ import 'dart:math';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/HotSearchBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
@@ -339,11 +341,7 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   startPageForResult(String str) {
-    Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-      return SearchDetailPage(
-        searchStr: str,
-      );
-    })).then((result) {
+    App.router.navigateTo(context, "${Routers.searchDetail}?searchStr=${Uri.encodeComponent(str)}").then((result){
       if (result != null) {
         _searchContent = result;
         save();

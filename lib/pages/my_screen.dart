@@ -3,6 +3,8 @@ import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/login_register_page.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
@@ -77,10 +79,7 @@ class _MyScreenState extends State<MyScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) {
-                    return LoginRegisterPage();
-                  })).then((result) {
+                  App.router.navigateTo(context, Routers.loginOrRegister).then((result){
                     _islogin = result;
                     init();
                   });

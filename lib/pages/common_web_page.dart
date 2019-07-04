@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/mode/CommonWebBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_demo/routers/app.dart';
 import 'package:flutter_demo/routers/routers.dart';
@@ -57,6 +56,7 @@ class _Common_Web_State extends State<CommonWebPage> {
                         model.dark ? 0.2 : 1);
                     return FlatButton(
                       onPressed: () {
+
                         App.router.navigateTo(context,
                             "${Routers.web}?title=${Uri.encodeComponent(_list[i].name)}&url=${Uri.encodeComponent(_list[i].link)}");
                       },

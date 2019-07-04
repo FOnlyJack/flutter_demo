@@ -6,6 +6,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
@@ -347,12 +349,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                   offstage: !isShowLogin,
                   child: InkWell(
                     onTap: () {
-                      setState(() {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return RegisterPage();
-                        }));
-                      });
+                      App.router.navigateTo(context, Routers.register);
                     },
                     child: Padding(
                       padding: EdgeInsets.only(top: 10),

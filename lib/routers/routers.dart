@@ -8,6 +8,10 @@ class Routers {
   static String search = "/search";
   static String web = "/web";
   static String classfication = "/classfication";
+  static String commonweb = "/commonweb";
+  static String register = "/register";
+  static String searchDetail = "/searchdetail";
+  static String loginOrRegister = "/loginorregister";
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
@@ -15,11 +19,13 @@ class Routers {
       print("ROUTE WAS NOT FOUND !!!");
     });
 
-    /// 第一个参数是路由地址，第二个参数是页面跳转和传参，第三个参数是默认的转场动画，可以看上图
-    /// 我这边先不设置默认的转场动画，转场动画在下面会讲，可以在另外一个地方设置（可以看NavigatorUtil类）
-//    router.define(root, handler: splashHandler);
+    /// 第一个参数是路由地址，第二个参数是页面跳转和传参，第三个参数是默认的转场动画
     router.define(search, handler: searchHandler);
     router.define(web, handler: webDetailsHandler);
     router.define(classfication, handler: classiFicationHandler);
+    router.define(commonweb, handler: commonWebHandler);
+    router.define(register, handler: registerHandler);
+    router.define(searchDetail, handler: searchDetailsHandler);
+    router.define(loginOrRegister, handler: loginOrRegisterHandler);
   }
 }
