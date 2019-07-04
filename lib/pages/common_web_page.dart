@@ -6,6 +6,8 @@ import 'package:flutter_demo/mode/CommonWebBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:provider/provider.dart';
 class CommonWebPage extends StatefulWidget {
   @override
@@ -47,11 +49,8 @@ class _Common_Web_State extends State<CommonWebPage> {
                       random.nextInt(255), random.nextInt(255), model.dark?0.2:1);
                   return FlatButton(
                     onPressed: () {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return ArticleDetailPage(
-                            title: _list[i].name, url: _list[i].link);
-                      }));
+                      App.router.navigateTo(context,
+                          "${Routers.web}?title=${Uri.encodeComponent(_list[i].name)}&url=${Uri.encodeComponent(_list[i].link)}");
                     },
                     child: Text(_list[i].name,style: TextStyle(
                         color: model.fontColor

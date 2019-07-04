@@ -7,6 +7,8 @@ import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/pages/common_web_page.dart';
 import 'package:flutter_demo/pages/search_screen.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:flutter_demo/view/PerfectArcView.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -75,7 +77,9 @@ class _SampleAppPageState extends State<HomeScreen>
             body: SafeArea(
               child: Stack(
                 children: <Widget>[
-                  PerfectArcView(model: model,),
+                  PerfectArcView(
+                    model: model,
+                  ),
                   Container(
                     width: ScreenUtil().width,
                     height: ScreenUtil().height,
@@ -175,9 +179,7 @@ Widget _barSearch(context, BottomCatModel model) {
           Expanded(
               child: FlatButton.icon(
             onPressed: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return SearchPage();
-              }));
+              App.router.navigateTo(context,Routers.search);
             },
             padding: EdgeInsets.only(right: 15),
             icon: Icon(Icons.search, color: model.fontColor, size: 25.0),
@@ -247,7 +249,7 @@ Widget _banner(BottomCatModel model) {
             List<HomePageBannerData> bannerListData =
                 HomePageBannerBean.fromJson(snapshot.data).data;
             return Opacity(
-              opacity: model.dark?0.3:1,
+              opacity: model.dark ? 0.3 : 1,
               child: Container(
                 margin: EdgeInsets.only(top: 10),
                 width: ScreenUtil().width,
@@ -255,12 +257,8 @@ Widget _banner(BottomCatModel model) {
                 child: RefreshSafeArea(
                   child: Swiper(
                     onTap: (i) {
-                      Navigator.of(context)
-                          .push(MaterialPageRoute(builder: (context) {
-                        return ArticleDetailPage(
-                            title: bannerListData[i].title,
-                            url: bannerListData[i].url);
-                      }));
+                      App.router.navigateTo(context,
+                          "${Routers.web}?title=${Uri.encodeComponent(bannerListData[i].title)}&url=${Uri.encodeComponent(bannerListData[i].url)}");
                     },
                     autoplayDisableOnInteraction: true,
                     controller: SwiperController(),
@@ -281,9 +279,9 @@ Widget _banner(BottomCatModel model) {
                     },
                     pagination: SwiperPagination(
                         builder: DotSwiperPaginationBuilder(
-                          color: model.fontColor,
-                          activeColor: model.cardBackgroundColor,
-                        )),
+                      color: model.fontColor,
+                      activeColor: model.cardBackgroundColor,
+                    )),
                     itemCount: bannerListData.length,
                   ),
                 ),
@@ -303,7 +301,7 @@ Widget _banner(BottomCatModel model) {
 ///首页list列表
 class PageList extends StatelessWidget {
   final List listPage;
-   BottomCatModel model;
+  BottomCatModel model;
 
   PageList({Key key, this.listPage, this.model}) : super(key: key);
 
@@ -388,10 +386,8 @@ class PageList extends StatelessWidget {
               ),
             ),
             onTap: () {
-              Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-                return ArticleDetailPage(
-                    title: listPage[index].title, url: listPage[index].link);
-              }));
+              App.router.navigateTo(context,
+                  "${Routers.web}?title=${Uri.encodeComponent(listPage[index].title)}&url=${Uri.encodeComponent(listPage[index].link)}");
             },
           );
         }, childCount: listPage.length));

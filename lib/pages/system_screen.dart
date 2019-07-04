@@ -1,13 +1,14 @@
-import 'package:dio/dio.dart';
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/provider/bottom_cat_model.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/SystemBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/classification_page.dart';
-import 'package:flutter_demo/pages/search_screen.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 /// 体系
 class SystemScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _SystemState extends State<SystemScreen> {
   GlobalKey<EasyRefreshState> _easyRefreshKey = GlobalKey<EasyRefreshState>();
   GlobalKey<RefreshHeaderState> _headerKey = GlobalKey<RefreshHeaderState>();
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
-  List<Data> _data = List();
+  List<SystemBeanChild> _data = List();
 
   @override
   void initState() {
@@ -35,7 +36,7 @@ class _SystemState extends State<SystemScreen> {
   Widget build(BuildContext context) {
     // TODO: implement build
     return Consumer<BottomCatModel>(
-      builder: (context,model,_){
+      builder: (context, model, _) {
         return Scaffold(
           appBar: AppBar(
             centerTitle: true,
@@ -43,41 +44,41 @@ class _SystemState extends State<SystemScreen> {
               "体系",
               style: TextStyle(color: model.fontColor),
             ),
-            actions: <Widget>[_rightSearch(context,model)],
+            actions: <Widget>[_rightSearch(context, model)],
           ),
           body: SafeArea(
               child: Container(
-                width: ScreenUtil().width,
-                height: ScreenUtil().height,
-                child: EasyRefresh(
-                  key: _easyRefreshKey,
-                  behavior: ScrollOverBehavior(),
-                  refreshHeader: ClassicsHeader(
-                    key: _headerKey,
-                    bgColor: model.dark
-                        ? model.searchBackgroundColor
-                        : Colors.transparent,
-                    textColor: model.fontColor,
-                    moreInfoColor: model.fontColor,
-                    showMore: true,
-                  ),
-                  refreshFooter: ClassicsFooter(
-                    key: _footerKey,
-                    bgColor: model.searchBackgroundColor,
-                    textColor: model.fontColor,
-                    moreInfoColor: model.fontColor,
-                    showMore: true,
-                  ),
-                  child: SystemList(
-                    model:model,
-                    listPage: _data,
-                  ),
-                  onRefresh: () async {
-                    getSystemData();
-                  },
-                  loadMore: () async {},
-                ),
-              )),
+            width: ScreenUtil().width,
+            height: ScreenUtil().height,
+            child: EasyRefresh(
+              key: _easyRefreshKey,
+              behavior: ScrollOverBehavior(),
+              refreshHeader: ClassicsHeader(
+                key: _headerKey,
+                bgColor: model.dark
+                    ? model.searchBackgroundColor
+                    : Colors.transparent,
+                textColor: model.fontColor,
+                moreInfoColor: model.fontColor,
+                showMore: true,
+              ),
+              refreshFooter: ClassicsFooter(
+                key: _footerKey,
+                bgColor: model.searchBackgroundColor,
+                textColor: model.fontColor,
+                moreInfoColor: model.fontColor,
+                showMore: true,
+              ),
+              child: SystemList(
+                model: model,
+                listPage: _data,
+              ),
+              onRefresh: () async {
+                getSystemData();
+              },
+              loadMore: () async {},
+            ),
+          )),
         );
       },
     );
@@ -86,7 +87,7 @@ class _SystemState extends State<SystemScreen> {
   getSystemData() async {
     request('homePageSystem').then((val) {
       SystemBean systemBean = SystemBean.fromJson(val);
-      List<Data> list = systemBean.data;
+      List<SystemBeanChild> list = systemBean.data;
       setState(() {
         _data.clear();
         _data.addAll(list);
@@ -99,9 +100,7 @@ class _SystemState extends State<SystemScreen> {
 Widget _rightSearch(context, BottomCatModel model) {
   return InkWell(
     onTap: () {
-      Navigator.of(context).push(MaterialPageRoute(builder: (context) {
-        return SearchPage();
-      }));
+      App.router.navigateTo(context, Routers.search);
     },
     child: Padding(
       padding: EdgeInsets.only(right: 15, left: 15),
@@ -114,7 +113,8 @@ Widget _rightSearch(context, BottomCatModel model) {
 class SystemList extends StatelessWidget {
   final List listPage;
   BottomCatModel model;
-  SystemList({Key key, this.listPage,this.model}) : super(key: key);
+
+  SystemList({Key key, this.listPage, this.model}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -126,17 +126,12 @@ class SystemList extends StatelessWidget {
           itemCount: listPage.length,
           itemBuilder: (BuildContext context, int index) {
             return GestureDetector(
-              onTap: () => {
-                    debugPrint("跳转页面"),
-                    Navigator.of(context)
-                        .push(MaterialPageRoute(builder: (context) {
-                      return ClassiFicationPage(
-                        title: listPage[index].name,
-                        cid: listPage[index].id,
-                        tabName: listPage[index].children,
-                      );
-                    }))
-                  },
+              onTap: () {
+                String string =
+                    Uri.encodeComponent(jsonEncode(listPage[index].toJson()));
+                App.router.navigateTo(context,
+                    "${Routers.classfication}?classiFicationJson=$string");
+              },
               child: Card(
                 color: model.cardBackgroundColor,
                 elevation: 5,
@@ -161,8 +156,7 @@ class SystemList extends StatelessWidget {
                                   listPage[index].children.length, (i) {
                                 return Text(
                                   listPage[index].children[i].name,
-                                  style:
-                                      TextStyle(color: model.fontColor),
+                                  style: TextStyle(color: model.fontColor),
                                 );
                               })))
                     ],

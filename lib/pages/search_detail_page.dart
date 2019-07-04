@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
@@ -122,12 +124,8 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
             ),
             onTap: () {
               if (_list != null && _list.length > 0) {
-                Navigator.of(context)
-                    .push(MaterialPageRoute(builder: (context) {
-                  return ArticleDetailPage(
-                      title: _list[index].title,
-                      url: _list[index].link);
-                }));
+                App.router.navigateTo(context,
+                    "${Routers.web}?title=${Uri.encodeComponent(_list[index].title)}&url=${Uri.encodeComponent(_list[index].link)}");
               }
             },
           );

@@ -1,6 +1,8 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/ProjectListTabBean.dart';
 import 'package:flutter_demo/mode/ProjectListTabListDetailBean.dart';
@@ -62,10 +64,7 @@ class _ProjectScreenState extends State<ProjectScreen>
             actions: <Widget>[
               InkWell(
                 onTap: () {
-                  Navigator.of(context)
-                      .push(MaterialPageRoute(builder: (context) {
-                    return SearchPage();
-                  }));
+                  App.router.navigateTo(context, Routers.search);
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 15, left: 15),
@@ -257,12 +256,8 @@ class _ContentState extends State<Content> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return ArticleDetailPage(
-                              title: _listPage[index].title,
-                              url: _listPage[index].link);
-                        }));
+                        App.router.navigateTo(context,
+                            "${Routers.web}?title=${Uri.encodeComponent(_listPage[index].title)}&url=${Uri.encodeComponent(_listPage[index].link)}");
                       },
                     );
                   }),

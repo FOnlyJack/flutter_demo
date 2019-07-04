@@ -7,7 +7,7 @@ part 'SystemBean.g.dart';
 class SystemBean {
 
   @JsonKey(name: 'data')
-  List<Data> data;
+  List<SystemBeanChild> data;
 
   @JsonKey(name: 'errorCode')
   int errorCode;
@@ -18,12 +18,12 @@ class SystemBean {
   SystemBean(this.data,this.errorCode,this.errorMsg,);
 
   factory SystemBean.fromJson(Map<String, dynamic> srcJson) => _$SystemBeanFromJson(srcJson);
-
+  Map<String, dynamic> toJson() => _$SystemBeanToJson(this);
 }
 
 
 @JsonSerializable()
-class Data {
+class SystemBeanChild {
 
   @JsonKey(name: 'children')
   List<Children> children;
@@ -49,10 +49,10 @@ class Data {
   @JsonKey(name: 'visible')
   int visible;
 
-  Data(this.children,this.courseId,this.id,this.name,this.order,this.parentChapterId,this.userControlSetTop,this.visible,);
+  SystemBeanChild(this.children,this.courseId,this.id,this.name,this.order,this.parentChapterId,this.userControlSetTop,this.visible,);
 
-  factory Data.fromJson(Map<String, dynamic> srcJson) => _$DataFromJson(srcJson);
-
+  factory SystemBeanChild.fromJson(Map<String, dynamic> srcJson) => _$SystemBeanChildFromJson(srcJson);
+  Map<String, dynamic> toJson() => _$SystemBeanChildToJson(this);
 }
 
 
@@ -86,7 +86,7 @@ class Children {
   Children(this.children,this.courseId,this.id,this.name,this.order,this.parentChapterId,this.userControlSetTop,this.visible,);
 
   factory Children.fromJson(Map<String, dynamic> srcJson) => _$ChildrenFromJson(srcJson);
-
+  Map<String, dynamic> toJson() => _$ChildrenToJson(this);
 }
 
-  
+

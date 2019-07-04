@@ -1,24 +1,22 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/mode/SystemBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:provider/provider.dart';
+import 'package:flutter_demo/mode/SystemBean.dart';
 class ClassiFicationPage extends StatefulWidget {
-  final int cid;
-  List<Children> tabName = List();
-  final String title;
 
-  ClassiFicationPage(
-      {Key key,
-      @required this.title,
-      @required this.cid,
-      @required this.tabName})
-      : super(key: key);
+  final String classiFicationJson;
+  ClassiFicationPage(this.classiFicationJson);
 
   @override
   State<StatefulWidget> createState() {
@@ -29,13 +27,9 @@ class ClassiFicationPage extends StatefulWidget {
 class _ClassificationState extends State<ClassiFicationPage>
     with TickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   TabController _tabController;
-  List<Children> _tabName = List();
-
   @override
   void initState() {
     super.initState();
-    _tabName = widget.tabName;
-    _tabController = TabController(length: _tabName.length, vsync: this);
   }
 
   @override
@@ -49,40 +43,58 @@ class _ClassificationState extends State<ClassiFicationPage>
   Widget build(BuildContext context) {
     return Consumer<BottomCatModel>(
       builder: (context,model,_){
-        return Scaffold(
-          appBar: AppBar(
-            centerTitle: true,
-            title: Text(widget.title,style: TextStyle(
-              color:  model.fontColor
-            ),),
-            bottom: TabBar(
-                isScrollable: true,
-                controller: _tabController,
-                indicatorColor: model.fontColor,
-                labelColor: model.fontColor,
-                unselectedLabelColor: model.fontColor,
-                tabs: _tabName.map((Children item) {
-                  return Tab(
-                    text: item.name,
+        return FutureBuilder(
+          future: json2Bean(),
+          builder: (context,val){
+          if(val.hasData){
+           SystemBeanChild _systemBeanChild =val.data;
+            _tabController = TabController(length: _systemBeanChild.children.length, vsync: this);
+            return Scaffold(
+              appBar: AppBar(
+                centerTitle: true,
+                title: Text(_systemBeanChild.name,style: TextStyle(
+                    color:  model.fontColor
+                ),),
+                bottom: TabBar(
+                    isScrollable: true,
+                    controller: _tabController,
+                    indicatorColor: model.fontColor,
+                    labelColor: model.fontColor,
+                    unselectedLabelColor: model.fontColor,
+                    tabs: _systemBeanChild.children.map((Children item) {
+                      return Tab(
+                        text: item.name,
+                      );
+                    }).toList()),
+              ),
+              body: TabBarView(
+                children: _systemBeanChild.children.map((Children item) {
+                  return Content(
+                      item.id,
+                      model
                   );
-                }).toList()),
-          ),
-          body: TabBarView(
-            children: _tabName.map((Children item) {
-              return Content(
-                item.id,
-                model
-              );
-            }).toList(),
-            controller: _tabController,
-          ),
-        );
+                }).toList(),
+                controller: _tabController,
+              ),
+            );
+          }else{
+            return Container(
+              child: Center(
+                child: Text(""),
+              ),
+            );
+          }
+        },);
       },
     );
   }
 
   @override
   bool get wantKeepAlive => true;
+
+  Future json2Bean() async {
+    return  SystemBeanChild.fromJson(await jsonDecode(widget.classiFicationJson));
+  }
 }
 
 class Content extends StatefulWidget {
@@ -218,12 +230,9 @@ class _ContentState extends State<Content> {
                         ),
                       ),
                       onTap: () {
-                        Navigator.of(context)
-                            .push(MaterialPageRoute(builder: (context) {
-                          return ArticleDetailPage(
-                              title: _listPage[index].title,
-                              url: _listPage[index].link);
-                        }));
+
+                        App.router.navigateTo(context,
+                            "${Routers.web}?title=${Uri.encodeComponent(_listPage[index].title)}&url=${Uri.encodeComponent(_listPage[index].link)}");
                       },
                     );
                   }),

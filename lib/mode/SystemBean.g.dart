@@ -10,7 +10,7 @@ SystemBean _$SystemBeanFromJson(Map<String, dynamic> json) {
   return SystemBean(
       (json['data'] as List)
           ?.map((e) =>
-              e == null ? null : Data.fromJson(e as Map<String, dynamic>))
+              e == null ? null : SystemBeanChild.fromJson(e as Map<String, dynamic>))
           ?.toList(),
       json['errorCode'] as int,
       json['errorMsg'] as String);
@@ -23,8 +23,8 @@ Map<String, dynamic> _$SystemBeanToJson(SystemBean instance) =>
       'errorMsg': instance.errorMsg
     };
 
-Data _$DataFromJson(Map<String, dynamic> json) {
-  return Data(
+SystemBeanChild _$SystemBeanChildFromJson(Map<String, dynamic> json) {
+  return SystemBeanChild(
       (json['children'] as List)
           ?.map((e) =>
               e == null ? null : Children.fromJson(e as Map<String, dynamic>))
@@ -38,7 +38,7 @@ Data _$DataFromJson(Map<String, dynamic> json) {
       json['visible'] as int);
 }
 
-Map<String, dynamic> _$DataToJson(Data instance) => <String, dynamic>{
+Map<String, dynamic> _$SystemBeanChildToJson(SystemBeanChild instance) => <String, dynamic>{
       'children': instance.children,
       'courseId': instance.courseId,
       'id': instance.id,
