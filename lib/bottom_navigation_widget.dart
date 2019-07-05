@@ -11,6 +11,8 @@ import 'package:provider/provider.dart';
 
 class BottomNavigationWidget extends StatelessWidget {
   static var _bottomNavigationColor = Colors.blue;
+
+  final pageController = PageController();
   final List<Widget> tabBodies = [
     HomeScreen(),
     SystemScreen(),
@@ -20,8 +22,6 @@ class BottomNavigationWidget extends StatelessWidget {
     MyScreen()
   ];
 
-
-
   @override
   Widget build(BuildContext context) {
     ScreenUtil.instance = ScreenUtil()..init(context);
@@ -30,19 +30,21 @@ class BottomNavigationWidget extends StatelessWidget {
         return MaterialApp(
           theme: model.themeData,
           home: Scaffold(
-            body: IndexedStack(
-              index: model.getPageIndex,
-              children: tabBodies,
-            ),
+            body: PageView(
+                controller: pageController,
+                children: tabBodies,
+                physics: NeverScrollableScrollPhysics(),
+                onPageChanged: (int index) {
+                  Provider.of<BottomCatModel>(context).setPageIndex(index);
+                }),
             bottomNavigationBar: BottomNavigationBar(
               backgroundColor: model.cardBackgroundColor,
               items: [
                 BottomNavigationBarItem(
                     icon: Icon(
                       Icons.home,
-                      color: model.dark
-                          ? model.fontColor
-                          : _bottomNavigationColor,
+                      color:
+                          model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '首页',
@@ -54,9 +56,8 @@ class BottomNavigationWidget extends StatelessWidget {
                 BottomNavigationBarItem(
                     icon: Icon(
                       Icons.wb_cloudy,
-                      color: model.dark
-                          ? model.fontColor
-                          : _bottomNavigationColor,
+                      color:
+                          model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '体系',
@@ -68,9 +69,8 @@ class BottomNavigationWidget extends StatelessWidget {
                 BottomNavigationBarItem(
                     icon: Icon(
                       Icons.donut_large,
-                      color: model.dark
-                          ? model.fontColor
-                          : _bottomNavigationColor,
+                      color:
+                          model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '公众号',
@@ -82,9 +82,8 @@ class BottomNavigationWidget extends StatelessWidget {
                 BottomNavigationBarItem(
                     icon: Icon(
                       Icons.navigation,
-                      color: model.dark
-                          ? model.fontColor
-                          : _bottomNavigationColor,
+                      color:
+                          model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '导航',
@@ -96,9 +95,8 @@ class BottomNavigationWidget extends StatelessWidget {
                 BottomNavigationBarItem(
                     icon: Icon(
                       Icons.pets,
-                      color: model.dark
-                          ? model.fontColor
-                          : _bottomNavigationColor,
+                      color:
+                          model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '项目',
@@ -110,9 +108,8 @@ class BottomNavigationWidget extends StatelessWidget {
                 BottomNavigationBarItem(
                     icon: Icon(
                       Icons.perm_identity,
-                      color: model.dark
-                          ? model.fontColor
-                          : _bottomNavigationColor,
+                      color:
+                          model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '我的',
@@ -124,7 +121,7 @@ class BottomNavigationWidget extends StatelessWidget {
               ],
               currentIndex: model.getPageIndex,
               onTap: (index) {
-                Provider.of<BottomCatModel>(context).setPageIndex(index);
+                pageController.jumpToPage(index);
               },
               type: BottomNavigationBarType.fixed,
             ),

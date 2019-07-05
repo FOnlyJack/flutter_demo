@@ -25,7 +25,7 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _SampleAppPageState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin,AutomaticKeepAliveClientMixin {
   List<Datas> _listPage = List();
   int _currentIndex = 0;
 
@@ -168,6 +168,10 @@ class _SampleAppPageState extends State<HomeScreen>
       });
     });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 /// 首页顶部搜索

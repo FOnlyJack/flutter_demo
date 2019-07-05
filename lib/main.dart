@@ -34,9 +34,10 @@ class MyApp extends StatelessWidget {
     // TODO: implement build
     return MaterialApp(
       onGenerateRoute: App.router.generator,
-      home:MultiProvider(providers: [
-        ChangeNotifierProvider(
-          builder:(_)=> BottomCatModel(),
+      home:MultiProvider(
+        providers: [
+        ChangeNotifierProvider<BottomCatModel>(
+          builder:(context)=> BottomCatModel(),
         )
       ], child: BottomNavigationWidget(),),
     );

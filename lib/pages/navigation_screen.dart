@@ -22,7 +22,7 @@ class NavigationScreen extends StatefulWidget {
   }
 }
 
-class _NavigationState extends State<NavigationScreen> {
+class _NavigationState extends State<NavigationScreen> with AutomaticKeepAliveClientMixin{
   List<Data> _listData = [];
 
   @override
@@ -84,6 +84,10 @@ class _NavigationState extends State<NavigationScreen> {
       }
     });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 /**

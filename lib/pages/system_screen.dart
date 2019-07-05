@@ -19,7 +19,7 @@ class SystemScreen extends StatefulWidget {
   }
 }
 
-class _SystemState extends State<SystemScreen> {
+class _SystemState extends State<SystemScreen> with AutomaticKeepAliveClientMixin {
   GlobalKey<EasyRefreshState> _easyRefreshKey = GlobalKey<EasyRefreshState>();
   GlobalKey<RefreshHeaderState> _headerKey = GlobalKey<RefreshHeaderState>();
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
@@ -94,6 +94,10 @@ class _SystemState extends State<SystemScreen> {
       });
     });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
 
 ///搜索

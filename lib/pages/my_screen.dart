@@ -18,7 +18,8 @@ class MyScreen extends StatefulWidget {
   }
 }
 
-class _MyScreenState extends State<MyScreen> {
+class _MyScreenState extends State<MyScreen>
+    with AutomaticKeepAliveClientMixin {
   bool _switchValue = false;
   bool _islogin = false;
 
@@ -79,7 +80,9 @@ class _MyScreenState extends State<MyScreen> {
               ),
               GestureDetector(
                 onTap: () {
-                  App.router.navigateTo(context, Routers.loginOrRegister).then((result){
+                  App.router
+                      .navigateTo(context, Routers.loginOrRegister)
+                      .then((result) {
                     _islogin = result;
                     init();
                   });
@@ -237,4 +240,8 @@ class _MyScreenState extends State<MyScreen> {
       Provider.of<BottomCatModel>(context).setNightMode(!_switchValue);
     });
   }
+
+  @override
+  // TODO: implement wantKeepAlive
+  bool get wantKeepAlive => true;
 }
