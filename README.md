@@ -1,7 +1,7 @@
 ## 前言
 
 - 这是一款学习Flutter时写的WanAndroid客户端应用，仅供练习。
-- [项目地址](https://github.com/FOnlyJack/flutter_demo)，如果本项目对于你学习Flutter可帮上忙的话，谢谢start一下哦
+- [项目地址](https://github.com/FOnlyJack/flutter_demo)，谢谢start一下哦
 
 ##  APP下载
 
@@ -9,7 +9,7 @@
 
   ![](screenshot/01.png)
 
-- 暂不支持IOS版本下载，暂时没做IOS兼容。
+- IOS版本就Clone下代码吧。
 
 ## 功能介绍
 
@@ -19,6 +19,10 @@
 - 主要的功能有首页轮播图，首页列表点击回到顶部，流式布局，视频背景形式的登录。
 - TabBar使用，首页顶部自定义弧形背景，图片的缓存，夜间模式切换，上下拉刷新加载更多。
 - 网络请求使用dio，暂时没有封装网络请求和其他的逻辑。
+
+#### V2.0版本
+
+- 加入provider状态管理和fluro路由管理。
 
 ## 我的主页
  - [掘金](https://juejin.im/user/5874fedd128fe10058366155)
@@ -56,3 +60,6 @@
 - [cached_network_image](https://pub.dev/packages/cached_network_image)
 - [video_player](https://pub.dev/packages/video_player)
 - [chewie](https://github.com/brianegan/chewie)
+- [flutter_screenutil](https://github.com/OpenFlutter/flutter_screenutil)
+- [provider](https://github.com/rrousselGit/provider)
+- [fluro](https://github.com/theyakka/fluro)
