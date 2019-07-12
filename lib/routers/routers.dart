@@ -12,6 +12,8 @@ class Routers {
   static String register = "/register";
   static String searchDetail = "/searchdetail";
   static String loginOrRegister = "/loginorregister";
+  static String splash = "/splash";
+  static String home = "/home";
 
   static void configureRoutes(Router router) {
     router.notFoundHandler = new Handler(
@@ -27,5 +29,6 @@ class Routers {
     router.define(register, handler: registerHandler);
     router.define(searchDetail, handler: searchDetailsHandler);
     router.define(loginOrRegister, handler: loginOrRegisterHandler);
+    router.define(home, handler: homeHandler);
   }
 }

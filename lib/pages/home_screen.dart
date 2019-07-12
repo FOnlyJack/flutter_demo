@@ -308,11 +308,10 @@ class PageList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SliverFixedExtentList(
-        itemExtent: ScreenUtil().setHeight(400),
+    return SliverList(
         delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
           return GestureDetector(
-            child: Card(
+            child:  Card(
               elevation: 1,
               color: model.cardBackgroundColor,
               clipBehavior: Clip.antiAlias,
@@ -331,14 +330,14 @@ class PageList extends StatelessWidget {
                     children: <Widget>[
                       Expanded(
                           child: Padding(
-                        padding: EdgeInsets.only(left: 10, top: 4),
-                        child: Text(
-                          "作者:" + listPage[index].author,
-                          style: TextStyle(
-                              fontSize: ScreenUtil().setSp(38),
-                              color: model.fontColor),
-                        ),
-                      )),
+                            padding: EdgeInsets.only(left: 10, top: 4),
+                            child: Text(
+                              "作者:" + listPage[index].author,
+                              style: TextStyle(
+                                  fontSize: ScreenUtil().setSp(38),
+                                  color: model.fontColor),
+                            ),
+                          )),
                       Padding(
                         child: Icon(
                           Icons.favorite,

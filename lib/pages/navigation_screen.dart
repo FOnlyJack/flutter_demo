@@ -1,16 +1,14 @@
 import 'dart:math';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/provider/bottom_cat_model.dart';
-import 'package:flutter_demo/routers/app.dart';
-import 'package:flutter_demo/routers/routers.dart';
-import 'package:provider/provider.dart';
 import 'package:flutter_demo/eventbus/eventBus.dart';
 import 'package:flutter_demo/mode/NavigationDetailBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/article_detail_page.dart';
-import 'package:flutter_demo/pages/search_screen.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
+import 'package:flutter_demo/routers/routers.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:provider/provider.dart';
 
 /**
  * 导航
@@ -23,12 +21,11 @@ class NavigationScreen extends StatefulWidget {
 }
 
 class _NavigationState extends State<NavigationScreen> with AutomaticKeepAliveClientMixin{
-  List<Data> _listData = [];
 
   @override
   void initState() {
     super.initState();
-    getNavigationData();
+
   }
 
   @override
@@ -56,33 +53,30 @@ class _NavigationState extends State<NavigationScreen> with AutomaticKeepAliveCl
             ],
           ),
           body: SafeArea(
-              child: Offstage(
-            offstage: _listData.length == 0,
-            child: Container(
-              child: Row(
-                children: <Widget>[
-                  LeftCategoryNav(_listData, model),
-                  CategoryGoodsList(_listData, model)
-                ],
-              ),
-            ),
-          )),
+              child: FutureBuilder(
+                  future: request('nav'),
+                  builder: (context,val){
+                    if(val.hasData){
+                      NavigationDetailBean navigationDetailBean =
+                      NavigationDetailBean.fromJson(val.data);
+                      List<Data> _listData = navigationDetailBean.data;
+                      return Container(
+                        child: Row(
+                          children: <Widget>[
+                            LeftCategoryNav(_listData, model),
+                            CategoryGoodsList(_listData, model)
+                          ],
+                        ),
+                      );
+                    }else{
+                      return Container(
+                        child: Text(""),
+                      );
+                    }
+                  })),
         );
       },
     );
-  }
-
-  getNavigationData() async {
-    request('nav').then((val) {
-      NavigationDetailBean navigationDetailBean =
-          NavigationDetailBean.fromJson(val);
-      List<Data> list = navigationDetailBean.data;
-      if (list != null && list.length > 0) {
-        setState(() {
-          _listData = list;
-        });
-      }
-    });
   }
 
   @override
@@ -107,24 +101,10 @@ class CategoryGoodsList extends StatefulWidget {
 }
 
 class _CategoryRightState extends State<CategoryGoodsList> {
-  int _leftIndex = 0;
-
-  @override
-  void initState() {
-    super.initState();
-    eventBus
-        .on<NavigationEvent>()
-        .listen((NavigationEvent data) => show(data.index));
-  }
-
-  void show(int val) {
-    setState(() {
-      _leftIndex = val;
-    });
-  }
-
+  int _leftIndex;
   @override
   Widget build(BuildContext context) {
+    _leftIndex = Provider.of<BottomCatModel>(context).navigationindex;
     return Expanded(
         child: Container(
             alignment: Alignment.topLeft,
@@ -206,11 +186,10 @@ class LeftCategoryNav extends StatefulWidget {
 
 class _LeftCategoryNavState extends State<LeftCategoryNav> {
   bool isClick = false;
-  var listIndex = 0; //索引
-
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
+    int navigationindex= Provider.of<BottomCatModel>(context).navigationindex;
     return Container(
       width: ScreenUtil().setWidth(240),
       decoration: BoxDecoration(
@@ -218,12 +197,11 @@ class _LeftCategoryNavState extends State<LeftCategoryNav> {
       child: ListView.builder(
         itemCount: widget._leftNavData.length,
         itemBuilder: (context, index) {
-          isClick = (index == listIndex) ? true : false;
+          isClick = (index == navigationindex ) ? true : false;
           return InkWell(
             onTap: () {
-              eventBus.fire(NavigationEvent(index));
               setState(() {
-                listIndex = index;
+                Provider.of<BottomCatModel>(context).setNavigationIndex(index);
               });
             },
             child: Container(

@@ -56,7 +56,6 @@ class _Common_Web_State extends State<CommonWebPage> {
                         model.dark ? 0.2 : 1);
                     return FlatButton(
                       onPressed: () {
-
                         App.router.navigateTo(context,
                             "${Routers.web}?title=${Uri.encodeComponent(_list[i].name)}&url=${Uri.encodeComponent(_list[i].link)}");
                       },
@@ -77,11 +76,7 @@ class _Common_Web_State extends State<CommonWebPage> {
                 )),
               );
             } else {
-              return Container(
-                child: Center(
-                  child: RefreshProgressIndicator(),
-                ),
-              );
+              return Container(child: Text(""),);
             }
           },
         );

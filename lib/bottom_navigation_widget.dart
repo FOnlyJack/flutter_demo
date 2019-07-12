@@ -2,14 +2,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter_demo/pages/my_screen.dart';
 import 'package:flutter_demo/pages/project_screen.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
+import 'package:flutter_demo/routers/app.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'pages/home_screen.dart';
 import 'pages/navigation_screen.dart';
 import 'pages/official_account_screen.dart';
 import 'pages/system_screen.dart';
 import 'package:provider/provider.dart';
+class BottomNavigationWidget extends StatefulWidget {
+  @override
+  _BottomNavigationWidgetState createState() => _BottomNavigationWidgetState();
+}
 
-class BottomNavigationWidget extends StatelessWidget {
+class _BottomNavigationWidgetState extends State<BottomNavigationWidget> {
   static var _bottomNavigationColor = Colors.blue;
 
   final pageController = PageController();
@@ -21,10 +26,8 @@ class BottomNavigationWidget extends StatelessWidget {
     ProjectScreen(),
     MyScreen()
   ];
-
   @override
   Widget build(BuildContext context) {
-    ScreenUtil.instance = ScreenUtil()..init(context);
     return Consumer<BottomCatModel>(
       builder: (context, model, _) {
         return MaterialApp(
@@ -44,7 +47,7 @@ class BottomNavigationWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.home,
                       color:
-                          model.dark ? model.fontColor : _bottomNavigationColor,
+                      model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '首页',
@@ -57,7 +60,7 @@ class BottomNavigationWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.wb_cloudy,
                       color:
-                          model.dark ? model.fontColor : _bottomNavigationColor,
+                      model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '体系',
@@ -70,7 +73,7 @@ class BottomNavigationWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.donut_large,
                       color:
-                          model.dark ? model.fontColor : _bottomNavigationColor,
+                      model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '公众号',
@@ -83,7 +86,7 @@ class BottomNavigationWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.navigation,
                       color:
-                          model.dark ? model.fontColor : _bottomNavigationColor,
+                      model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '导航',
@@ -96,7 +99,7 @@ class BottomNavigationWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.pets,
                       color:
-                          model.dark ? model.fontColor : _bottomNavigationColor,
+                      model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '项目',
@@ -109,7 +112,7 @@ class BottomNavigationWidget extends StatelessWidget {
                     icon: Icon(
                       Icons.perm_identity,
                       color:
-                          model.dark ? model.fontColor : _bottomNavigationColor,
+                      model.dark ? model.fontColor : _bottomNavigationColor,
                     ),
                     title: Text(
                       '我的',
@@ -131,3 +134,4 @@ class BottomNavigationWidget extends StatelessWidget {
     );
   }
 }
+

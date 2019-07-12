@@ -166,7 +166,10 @@ class _MyScreenState extends State<MyScreen>
         ),
         Divider(height: ScreenUtil().setHeight(1)),
         InkWell(
-          onTap: () {},
+          onTap: () {
+            App.router.navigateTo(context,
+                "${Routers.web}?title=${Uri.encodeComponent("关于")}&url=${Uri.encodeComponent("https://github.com/FOnlyJack/flutter_demo")}");
+          },
           child: Container(
             color: val.cardBackgroundColor,
             child: Row(

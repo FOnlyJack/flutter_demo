@@ -1,5 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/bottom_navigation_widget.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/pages/classification_page.dart';
 import 'package:flutter_demo/pages/common_web_page.dart';
@@ -7,6 +8,7 @@ import 'package:flutter_demo/pages/login_register_page.dart';
 import 'package:flutter_demo/pages/register_page.dart';
 import 'package:flutter_demo/pages/search_detail_page.dart';
 import 'package:flutter_demo/pages/search_screen.dart';
+import 'package:flutter_demo/pages/splash_page.dart';
 
 ///跳转到搜索
 var searchHandler =  Handler(
@@ -50,4 +52,9 @@ var searchDetailsHandler =  Handler(
 var loginOrRegisterHandler =  Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
       return LoginRegisterPage();
+    });
+///SplashPage跳转到主页
+var homeHandler =  Handler(
+    handlerFunc: (BuildContext context, Map<String, List<String>> params) {
+      return BottomNavigationWidget();
     });

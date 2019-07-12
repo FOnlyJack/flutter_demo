@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 class BottomCatModel with ChangeNotifier {
   int _pageindex = 0; //首页底部tab切换
+  int _navigationindex =1; //导航左侧菜单位置
 
   bool _dark = false;
 
@@ -24,12 +25,18 @@ class BottomCatModel with ChangeNotifier {
 
   Color get cardBackgroundColor => _cardBackgroundColor;
 
+  int get navigationindex => _navigationindex;
+
   ///首页底部切换状态
   void setPageIndex(int currentIndex) {
     _pageindex = currentIndex;
     notifyListeners();
   }
-
+  ///导航左侧菜单位置
+  void setNavigationIndex(int currentIndex) {
+    _navigationindex = currentIndex;
+    notifyListeners();
+  }
   ///夜间模式切换状态
   void setNightMode(bool dark) {
     if (dark) {
