@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_demo/mode/RegisterResultBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/login_register_page.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_demo/routers/app.dart';
 import 'package:flutter_demo/routers/routers.dart';
@@ -9,7 +8,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
 class MyScreen extends StatefulWidget {
   @override
   State<StatefulWidget> createState() {
@@ -200,36 +198,48 @@ class _MyScreenState extends State<MyScreen>
           ),
         ),
         Divider(height: 1),
-        FlatButton(
-          onPressed: () async {
-            request("logout").then((val) async {
-              RegisterResultBean register = RegisterResultBean.fromJson(val);
-              if (register.errorCode != -1) {
-                SharedPreferences prefs = await SharedPreferences.getInstance();
-                prefs.setBool("isLogin", false);
-                prefs.setString("user-name", "");
-                prefs.setString("user-pw", "");
-                setState(() {
-                  _islogin = false;
-                });
-                Fluttertoast.showToast(
-                  msg: "退出成功!",
-                  toastLength: Toast.LENGTH_SHORT,
-                  gravity: ToastGravity.BOTTOM,
-                  timeInSecForIos: 1,
-                );
-              }
-            });
-          },
-          child: Text("退出"),
-          color: val.dark ? val.cardBackgroundColor : Colors.red,
-          textColor: val.fontColor,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                color: val.dark ? val.cardBackgroundColor : Colors.red,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5)),
+        Container(
+          margin: EdgeInsets.only(top: 30, left: 20, right: 20),
+          child: FlatButton(
+            onPressed: () async {
+              request("logout").then((val) async {
+                RegisterResultBean register = RegisterResultBean.fromJson(val);
+                if (register.errorCode != -1) {
+                  SharedPreferences prefs =
+                      await SharedPreferences.getInstance();
+                  prefs.setBool("isLogin", false);
+                  prefs.setString("user-name", "");
+                  prefs.setString("user-pw", "");
+                  setState(() {
+                    _islogin = false;
+                  });
+                  Fluttertoast.showToast(
+                    msg: "退出成功!",
+                    toastLength: Toast.LENGTH_SHORT,
+                    gravity: ToastGravity.BOTTOM,
+                    timeInSecForIos: 1,
+                  );
+                }
+              });
+            },
+            child: Container(
+              alignment: Alignment.center,
+              width: ScreenUtil().width,
+              height: ScreenUtil().setHeight(120),
+              child: Text("退出"),
+            ),
+            color:
+                val.dark ? val.cardBackgroundColor : val.themeData.primaryColor,
+            textColor: val.fontColor,
+            shape: RoundedRectangleBorder(
+                side: BorderSide(
+                  color: val.dark
+                      ? val.cardBackgroundColor
+                      : val.themeData.primaryColor,
+                  width: 1,
+                ),
+                borderRadius: BorderRadius.circular(5)),
+          ),
         )
       ],
     );

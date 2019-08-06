@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String title;
@@ -96,12 +97,18 @@ class ArticleDetailPageState extends State<ArticleDetailPage> {
           child: _progressBar(),
           preferredSize: Size.fromHeight(2.0),
         ),
+        actions: <Widget>[
+          IconButton(
+              icon: Icon(Icons.open_in_browser),
+              onPressed: () => launch(widget.url))
+        ],
       ),
       withZoom: false,
       withLocalStorage: true,
       withJavascript: true,
-    ) ;
+    );
   }
+
   ///页面加载进度
   Widget _progressBar() {
     return SizedBox(
@@ -109,7 +116,7 @@ class ArticleDetailPageState extends State<ArticleDetailPage> {
       child: LinearProgressIndicator(
         value: loading ? _progress : 1,
         backgroundColor: Color(0xfff3f3f3),
-        valueColor:  AlwaysStoppedAnimation<Color>(Colors.green),
+        valueColor: AlwaysStoppedAnimation<Color>(Colors.green),
       ),
     );
   }
