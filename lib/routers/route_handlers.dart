@@ -1,6 +1,6 @@
 import 'package:fluro/fluro.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_demo/bottom_navigation_widget.dart';
+import 'package:flutter_demo/main_screen.dart';
 import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_demo/pages/classification_page.dart';
 import 'package:flutter_demo/pages/common_web_page.dart';
@@ -56,5 +56,5 @@ var loginOrRegisterHandler =  Handler(
 ///SplashPage跳转到主页
 var homeHandler =  Handler(
     handlerFunc: (BuildContext context, Map<String, List<String>> params) {
-      return BottomNavigationWidget();
+      return MainScreen();
     });

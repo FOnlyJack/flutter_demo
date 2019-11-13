@@ -1,11 +1,9 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_demo/mode/HomePageBannerBean.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/article_detail_page.dart';
-import 'package:flutter_demo/pages/common_web_page.dart';
-import 'package:flutter_demo/pages/search_screen.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_demo/routers/app.dart';
 import 'package:flutter_demo/routers/routers.dart';
@@ -13,6 +11,7 @@ import 'package:flutter_demo/view/PerfectArcView.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:palette_generator/palette_generator.dart';
 import 'package:provider/provider.dart';
 
 /// 首页
@@ -25,40 +24,43 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _SampleAppPageState extends State<HomeScreen>
-    with SingleTickerProviderStateMixin,AutomaticKeepAliveClientMixin {
+    with SingleTickerProviderStateMixin, AutomaticKeepAliveClientMixin {
   List<Datas> _listPage = List();
   int _currentIndex = 0;
+  final int DEFAULT_SCROLLER = 200;
 
   GlobalKey<EasyRefreshState> _easyRefreshKey = GlobalKey<EasyRefreshState>();
   GlobalKey<RefreshHeaderState> _headerKey = GlobalKey<RefreshHeaderState>();
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   ScrollController _scrollController;
-  bool _isShowActionButton = true;
 
   @override
   void initState() {
     super.initState();
 
     loadHomeListData();
+
     _scrollController = new ScrollController();
     _scrollController.addListener(() {
+      double t = 1 - _scrollController.offset / DEFAULT_SCROLLER;
+      if (t < 0.0) {
+        t = 0.0;
+      } else if (t > 1.0) {
+        t = 1.0;
+      }
+      Provider.of<BottomCatModel>(context).setOpacity(t);
       if (_scrollController.position.maxScrollExtent / (4 * _currentIndex + 1) >
           _scrollController.offset) {
-        setState(() {
-          _isShowActionButton = true;
-        });
+        Provider.of<BottomCatModel>(context).setIsShowActionButton(true);
       } else {
-        setState(() {
-          _isShowActionButton = false;
-        });
+        Provider.of<BottomCatModel>(context).setIsShowActionButton(false);
       }
     });
   }
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _scrollController.dispose();
   }
@@ -69,16 +71,37 @@ class _SampleAppPageState extends State<HomeScreen>
       builder: (context, model, _) {
         return Scaffold(
             appBar: AppBar(
+              backgroundColor: model.dark
+                  ? model.cardBackgroundColor
+                  : model.imageColor.withOpacity(model.opacity),
               leading: null,
-              elevation: 0,
+              elevation: 0.3,
               centerTitle: true,
               title: Hero(tag: "search", child: _barSearch(context, model)),
             ),
             body: SafeArea(
               child: Stack(
                 children: <Widget>[
-                  PerfectArcView(
-                    model: model,
+                  Container(
+                    child: Offstage(
+                      offstage: model.dark,
+                      child: Opacity(
+                          opacity: model.opacity,
+                          child: PerfectArcView(
+                            model: model,
+                          )),
+                    ),
+                    decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                      colors: [
+                        model.cardBackgroundColor.withOpacity(model.opacity),
+                        model.dark
+                            ? model.fontColor
+                            : model.imageColor.withOpacity(model.opacity)
+                      ],
+                      begin: Alignment.topCenter,
+                      end: Alignment.bottomCenter,
+                    )),
                   ),
                   Container(
                     width: ScreenUtil().width,
@@ -109,7 +132,7 @@ class _SampleAppPageState extends State<HomeScreen>
                           PageList(
                             model: model,
                             listPage: _listPage,
-                          )
+                          ),
                         ],
                       ),
                       onRefresh: () async {
@@ -126,25 +149,28 @@ class _SampleAppPageState extends State<HomeScreen>
             floatingActionButtonLocation:
                 FloatingActionButtonLocation.endDocked,
             floatingActionButton: Offstage(
-              offstage: _isShowActionButton,
-              child: FloatingActionButton(
-                  child: Icon(Icons.arrow_upward),
-                  onPressed: () {
-                    _scrollController
-                        .animateTo(0,
-                            duration: Duration(seconds: 1),
-                            curve: Curves.linear)
-                        .then((_) {
-                      setState(() {
-                        _isShowActionButton = true;
+              offstage: model.isShowActionButton,
+              child: Opacity(
+                opacity: model.dark ? 0.3 : 1,
+                child: FloatingActionButton(
+                    child: Icon(Icons.arrow_upward),
+                    onPressed: () {
+                      _scrollController
+                          .animateTo(0,
+                              duration: Duration(seconds: 1),
+                              curve: Curves.linear)
+                          .then((_) {
+                        Provider.of<BottomCatModel>(context)
+                            .setIsShowActionButton(true);
                       });
-                    });
-                  }),
+                    }),
+              ),
             ));
       },
     );
   }
 
+  ///加载首页列表
   loadHomeListData() async {
     _currentIndex = 0;
     getHomePageContent(_currentIndex).then((val) {
@@ -157,6 +183,7 @@ class _SampleAppPageState extends State<HomeScreen>
     });
   }
 
+  ///首页列表加载更多
   loadHomeListMoreData() async {
     _currentIndex++;
     getHomePageContent(_currentIndex).then((val) {
@@ -183,7 +210,7 @@ Widget _barSearch(context, BottomCatModel model) {
           Expanded(
               child: FlatButton.icon(
             onPressed: () {
-              App.router.navigateTo(context,Routers.search);
+              App.router.navigateTo(context, Routers.search);
             },
             padding: EdgeInsets.only(right: 15),
             icon: Icon(Icons.search, color: model.fontColor, size: 25.0),
@@ -240,6 +267,15 @@ Widget _barSearch(context, BottomCatModel model) {
       ));
 }
 
+Future<PaletteGenerator> _updatePaletteGenerator(String img) async {
+  return await PaletteGenerator.fromImageProvider(
+    NetworkImage(img),
+    size: Size(257.0, 170.0),
+    region: Offset.zero & Size(257.0, 170.0),
+    maximumColorCount: 10,
+  );
+}
+
 ///首页轮播
 Widget _banner(BottomCatModel model) {
   return SliverToBoxAdapter(
@@ -249,42 +285,50 @@ Widget _banner(BottomCatModel model) {
           if (snapshot.hasData) {
             List<HomePageBannerData> bannerListData =
                 HomePageBannerBean.fromJson(snapshot.data).data;
-            return Opacity(
-              opacity: model.dark ? 0.3 : 1,
-              child: Container(
-                margin: EdgeInsets.only(top: 10),
-                width: ScreenUtil().width,
-                height: ScreenUtil().setHeight(450),
-                child: RefreshSafeArea(
-                  child: Swiper(
-                    onTap: (i) {
-                      App.router.navigateTo(context,
-                          "${Routers.web}?title=${Uri.encodeComponent(bannerListData[i].title)}&url=${Uri.encodeComponent(bannerListData[i].url)}");
-                    },
-                    autoplayDisableOnInteraction: true,
-                    controller: SwiperController(),
-                    autoplay: true,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        margin: EdgeInsets.only(left: 20, right: 20),
+            return Container(
+              margin: EdgeInsets.only(top: 10),
+              width: ScreenUtil().width,
+              height: ScreenUtil().setHeight(450),
+              child: RefreshSafeArea(
+                child: Swiper(
+                  autoplayDelay: 5000,
+                  layout: SwiperLayout.DEFAULT,
+                  viewportFraction: 0.8,
+                  onTap: (i) {
+                    App.router.navigateTo(context,
+                        "${Routers.web}?title=${Uri.encodeComponent(bannerListData[i].title)}&url=${Uri.encodeComponent(bannerListData[i].url)}");
+                  },
+                  autoplayDisableOnInteraction: true,
+                  controller: new SwiperController(),
+                  autoplay: true,
+                  itemBuilder: (BuildContext context, int index) {
+                    String url = bannerListData[index].imagePath;
+                    return Container(
+                        margin: EdgeInsets.only(left: 10, right: 10),
                         child: ClipRRect(
-                          child: CachedNetworkImage(
-                            fit: BoxFit.fill,
-                            imageUrl: bannerListData[index].imagePath,
-                            errorWidget: (context, url, error) =>
-                                Icon(Icons.error),
+                          child: Opacity(
+                            opacity: model.dark ? 0.3 : 1,
+                            child: CachedNetworkImage(
+                              fit: BoxFit.fill,
+                              imageUrl: url,
+                            ),
                           ),
                           borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                      );
-                    },
-                    pagination: SwiperPagination(
-                        builder: DotSwiperPaginationBuilder(
-                      color: model.fontColor,
-                      activeColor: model.cardBackgroundColor,
-                    )),
-                    itemCount: bannerListData.length,
-                  ),
+                        ));
+                  },
+                  pagination: SwiperPagination(
+                      builder: DotSwiperPaginationBuilder(
+                    color: model.fontColor,
+                    activeColor: model.cardBackgroundColor,
+                  )),
+                  itemCount: bannerListData.length,
+                  onIndexChanged: (i) {
+                    _updatePaletteGenerator(bannerListData[i].imagePath)
+                        .then((v) {
+                      Provider.of<BottomCatModel>(context)
+                          .setImageColor(v?.lightVibrantColor?.color);
+                    });
+                  },
                 ),
               ),
             );
@@ -310,86 +354,80 @@ class PageList extends StatelessWidget {
   Widget build(BuildContext context) {
     return SliverList(
         delegate: SliverChildBuilderDelegate((BuildContext context, int index) {
-          return GestureDetector(
-            child:  Card(
-              elevation: 1,
-              color: model.cardBackgroundColor,
-              clipBehavior: Clip.antiAlias,
-              margin: EdgeInsets.only(top: 10, left: 5, right: 5),
-              shape: const RoundedRectangleBorder(
-                  borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(10.0),
-                      topRight: Radius.zero,
-                      bottomLeft: Radius.zero,
-                      bottomRight: Radius.circular(20.0))),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
+      return GestureDetector(
+        child: Card(
+          elevation: 2,
+          color: model.cardBackgroundColor,
+          clipBehavior: Clip.antiAlias,
+          margin: EdgeInsets.only(top: 10, left: 5, right: 5),
+          shape:
+              RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: <Widget>[
+              Row(
                 children: <Widget>[
-                  Row(
-                    children: <Widget>[
-                      Expanded(
-                          child: Padding(
-                            padding: EdgeInsets.only(left: 10, top: 4),
-                            child: Text(
-                              "作者:" + listPage[index].author,
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(38),
-                                  color: model.fontColor),
-                            ),
-                          )),
-                      Padding(
-                        child: Icon(
-                          Icons.favorite,
-                          color: listPage[index].collect
-                              ? Colors.red
-                              : model.fontColor,
-                        ),
-                        padding: EdgeInsets.only(right: 5, top: 4),
-                      )
-                    ],
-                  ),
-                  Padding(
+                  Expanded(
+                      child: Padding(
+                    padding: EdgeInsets.only(left: 10, top: 4),
                     child: Text(
-                      listPage[index].title,
-                      style: TextStyle(
-                          fontSize: ScreenUtil().setSp(42),
-                          color: model.fontColor,
-                          fontWeight: FontWeight.bold),
-                      maxLines: 2,
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                    padding: EdgeInsets.only(left: 10, top: 1, bottom: 1),
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(left: 10, bottom: 4),
-                    child: Text(
-                      "分类:" +
-                          listPage[index].superChapterName +
-                          "/" +
-                          listPage[index].chapterName,
+                      "作者:" + listPage[index].author,
                       style: TextStyle(
                           fontSize: ScreenUtil().setSp(38),
                           color: model.fontColor),
                     ),
-                  ),
+                  )),
                   Padding(
-                    padding: EdgeInsets.only(left: 10, bottom: 4),
-                    child: Text(
-                      "时间:" + listPage[index].niceDate,
-                      style: TextStyle(
-                          fontSize: ScreenUtil().setSp(38),
-                          color: model.fontColor),
+                    child: Icon(
+                      Icons.favorite,
+                      color: listPage[index].collect
+                          ? Colors.red
+                          : model.fontColor,
                     ),
+                    padding: EdgeInsets.only(right: 5, top: 4),
                   )
                 ],
               ),
-            ),
-            onTap: () {
-              App.router.navigateTo(context,
-                  "${Routers.web}?title=${Uri.encodeComponent(listPage[index].title)}&url=${Uri.encodeComponent(listPage[index].link)}");
-            },
-          );
-        }, childCount: listPage.length));
+              Padding(
+                child: Text(
+                  listPage[index].title,
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(42),
+                      color: model.fontColor,
+                      fontWeight: FontWeight.bold),
+                  maxLines: 2,
+                  overflow: TextOverflow.ellipsis,
+                ),
+                padding: EdgeInsets.only(left: 10, top: 1, bottom: 1),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10, bottom: 4),
+                child: Text(
+                  "分类:" +
+                      listPage[index].superChapterName +
+                      "/" +
+                      listPage[index].chapterName,
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(38), color: model.fontColor),
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 10, bottom: 4),
+                child: Text(
+                  "时间:" + listPage[index].niceDate,
+                  style: TextStyle(
+                      fontSize: ScreenUtil().setSp(38), color: model.fontColor),
+                ),
+              )
+            ],
+          ),
+        ),
+        onTap: () {
+          App.router.navigateTo(context,
+              "${Routers.web}?title=${Uri.encodeComponent(listPage[index].title)}&url=${Uri.encodeComponent(listPage[index].link)}");
+        },
+      );
+    }, childCount: listPage.length));
   }
 }

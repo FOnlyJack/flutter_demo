@@ -44,7 +44,7 @@ class RenderCircle extends RenderBox {
   @override
   void paint(PaintingContext context, Offset offset) {
     var canvas = context.canvas;
-    mPaint.color = model.dark ? model.cardBackgroundColor : Color(0xFF3296F2);
+    mPaint.color = model.dark ? model.cardBackgroundColor : model.imageColor;
 
     mPath.reset();
 

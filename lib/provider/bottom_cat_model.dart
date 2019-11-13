@@ -1,19 +1,20 @@
 import 'package:flutter/material.dart';
 
 class BottomCatModel with ChangeNotifier {
-  int _pageindex = 0; //首页底部tab切换
-  int _navigationindex =1; //导航左侧菜单位置
-
+  int _pageindex = 0;
+  int _navigationindex = 1;
   bool _dark = false;
+  bool _isShowActionButton = true;
+  double _opacity = 1.0;
 
-  bool get dark => _dark; //是否是夜间模式
   ThemeData _themeData = ThemeData(
     primaryColor: Color(0xff2196f3),
     scaffoldBackgroundColor: Color(0xFFEBEBEB),
   );
   Color _searchBackgroundColor = Color(0xFFEBEBEB);
   Color _cardBackgroundColor = Colors.white;
-  Color _fontColor = Colors.black54;
+  Color _fontColor = Colors.black87;
+  Color _imgColor = Color(0xff2196f3);
 
   int get getPageIndex => _pageindex;
 
@@ -27,16 +28,26 @@ class BottomCatModel with ChangeNotifier {
 
   int get navigationindex => _navigationindex;
 
+  Color get imageColor => _imgColor;
+
+  bool get isShowActionButton => _isShowActionButton;
+
+  double get opacity => _opacity;
+
+  bool get dark => _dark;
+
   ///首页底部切换状态
   void setPageIndex(int currentIndex) {
     _pageindex = currentIndex;
     notifyListeners();
   }
+
   ///导航左侧菜单位置
   void setNavigationIndex(int currentIndex) {
     _navigationindex = currentIndex;
     notifyListeners();
   }
+
   ///夜间模式切换状态
   void setNightMode(bool dark) {
     if (dark) {
@@ -46,7 +57,7 @@ class BottomCatModel with ChangeNotifier {
       );
       _searchBackgroundColor = Color(0xFFEBEBEB);
       _cardBackgroundColor = Colors.white;
-      _fontColor = Colors.black54;
+      _fontColor = Colors.black87;
       _dark = false;
     } else {
       _themeData = ThemeData.dark();
@@ -55,6 +66,24 @@ class BottomCatModel with ChangeNotifier {
       _fontColor = Colors.white30;
       _dark = true;
     }
+    notifyListeners();
+  }
+
+  ///设置首页背景颜色
+  void setImageColor(Color color) {
+    _imgColor = color ?? Color(0xff2196f3);
+    notifyListeners();
+  }
+
+  ///控制首页浮动按钮显示和隐藏
+  void setIsShowActionButton(bool param) {
+    _isShowActionButton = param;
+    notifyListeners();
+  }
+
+  ///设置首页背景透明度变化
+  void setOpacity(double t) {
+    _opacity = t;
     notifyListeners();
   }
 }
