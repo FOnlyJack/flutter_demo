@@ -41,10 +41,11 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
     super.initState();
     search(0, false);
   }
+
   ///搜索结果列表
-  Widget _searchresult(_list, BottomCatModel model){
+  Widget _searchresult(_list, BottomCatModel model) {
     return ListView.builder(
-      //ListView的Item
+        //ListView的Item
         physics: new BouncingScrollPhysics(),
         shrinkWrap: true,
         itemCount: _list.length,
@@ -68,14 +69,14 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                     children: <Widget>[
                       Expanded(
                           child: Padding(
-                            padding: EdgeInsets.only(left: 10, top: 4),
-                            child: Text(
-                              "作者:" + _list[index].author,
-                              style: TextStyle(
-                                  fontSize: ScreenUtil().setSp(35),
-                                  color: model.fontColor),
-                            ),
-                          )),
+                        padding: EdgeInsets.only(left: 10, top: 4),
+                        child: Text(
+                          "作者:" + _list[index].author,
+                          style: TextStyle(
+                              fontSize: ScreenUtil().setSp(35),
+                              color: model.fontColor),
+                        ),
+                      )),
                       Padding(
                         child: Icon(
                           Icons.favorite,
@@ -95,8 +96,7 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
                           color: model.fontColor,
                           fontWeight: FontWeight.bold),
                     ),
-                    padding:
-                    EdgeInsets.only(left: 10, top: 1, bottom: 1),
+                    padding: EdgeInsets.only(left: 10, top: 1, bottom: 1),
                   ),
                   Padding(
                     padding: EdgeInsets.only(left: 10, bottom: 4),
@@ -131,57 +131,60 @@ class _SearchDetailPageState extends State<SearchDetailPage> {
           );
         });
   }
+
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-        child: Consumer<BottomCatModel>(
-          builder: (context,model,_){
-            return Scaffold(
-              appBar: AppBar(
-                title: Text(
-                  widget.searchStr,
-                  style: TextStyle(color: model.fontColor),
-                ),
+    return WillPopScope(child: Consumer<BottomCatModel>(
+      builder: (context, model, _) {
+        return Scaffold(
+          appBar: AppBar(
+            iconTheme: IconThemeData(
+                color: model.dark ? model.fontColor : Colors.white),
+            title: Text(
+              widget.searchStr,
+              style:
+                  TextStyle(color: model.dark ? model.fontColor : Colors.white),
+            ),
+          ),
+          body: Container(
+            width: ScreenUtil().width,
+            height: ScreenUtil().height,
+            child: EasyRefresh(
+              key: _easyRefreshKey,
+              behavior: ScrollOverBehavior(),
+              refreshHeader: ClassicsHeader(
+                key: _headerKey,
+                bgColor: model.dark
+                    ? model.searchBackgroundColor
+                    : Colors.transparent,
+                textColor: model.fontColor,
+                moreInfoColor: model.fontColor,
+                showMore: true,
               ),
-              body: Container(
-                width: ScreenUtil().width,
-                height: ScreenUtil().height,
-                child: EasyRefresh(
-                  key: _easyRefreshKey,
-                  behavior: ScrollOverBehavior(),
-                  refreshHeader: ClassicsHeader(
-                    key: _headerKey,
-                    bgColor: model.dark
-                        ? model.searchBackgroundColor
-                        : Colors.transparent,
-                    textColor: model.fontColor,
-                    moreInfoColor: model.fontColor,
-                    showMore: true,
-                  ),
-                  refreshFooter: ClassicsFooter(
-                    key: _footerKey,
-                    bgColor: model.searchBackgroundColor,
-                    textColor: model.fontColor,
-                    moreInfoColor: model.fontColor,
-                    showMore: true,
-                  ),
-                  child: _searchresult(_list,model),
-                  onRefresh: () async {
-                    search(0, false);
-                  },
-                  loadMore: () async {
-                    search(_page == 0 ? _page + 1 : _page, true);
-                  },
-                ),
+              refreshFooter: ClassicsFooter(
+                key: _footerKey,
+                bgColor: model.searchBackgroundColor,
+                textColor: model.fontColor,
+                moreInfoColor: model.fontColor,
+                showMore: true,
               ),
-            );
-          },
-        ),
-        onWillPop: () {
-          if (widget.searchStr.isNotEmpty) {
-            Navigator.pop(context, widget.searchStr);
-          }
-        });
+              child: _searchresult(_list, model),
+              onRefresh: () async {
+                search(0, false);
+              },
+              loadMore: () async {
+                search(_page == 0 ? _page + 1 : _page, true);
+              },
+            ),
+          ),
+        );
+      },
+    ), onWillPop: () {
+      if (widget.searchStr.isNotEmpty) {
+        Navigator.pop(context, widget.searchStr);
+      }
+      return;
+    });
   }
 
   search(int index, bool isload) async {

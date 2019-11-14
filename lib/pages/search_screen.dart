@@ -1,17 +1,15 @@
 import 'dart:async';
 import 'dart:math';
 
-import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_demo/mode/HotSearchBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_demo/routers/app.dart';
 import 'package:flutter_demo/routers/routers.dart';
-import 'package:provider/provider.dart';
-import 'package:flutter_demo/mode/HotSearchBean.dart';
-import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/search_detail_page.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SearchPage extends StatefulWidget {
@@ -42,10 +40,12 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return Consumer<BottomCatModel>(
-      builder: (context,model,_){
+      builder: (context, model, _) {
         return Scaffold(
             resizeToAvoidBottomPadding: false,
             appBar: AppBar(
+              iconTheme: IconThemeData(
+                  color: model.dark ? model.fontColor : Colors.white),
               title: Hero(
                   tag: "search",
                   child: Container(
@@ -76,8 +76,8 @@ class _SearchPageState extends State<SearchPage> {
                                   },
                                   child: Text(
                                     "x",
-                                    style:
-                                    TextStyle(fontSize: ScreenUtil().setSp(24)),
+                                    style: TextStyle(
+                                        fontSize: ScreenUtil().setSp(24)),
                                   ),
                                   color: Colors.transparent,
                                   textColor: model.fontColor,
@@ -99,7 +99,7 @@ class _SearchPageState extends State<SearchPage> {
                       ),
                       decoration: BoxDecoration(
                         borderRadius:
-                        const BorderRadius.all(const Radius.circular(3.0)),
+                            const BorderRadius.all(const Radius.circular(3.0)),
                         color: model.searchBackgroundColor,
                       ))),
               actions: <Widget>[
@@ -119,7 +119,8 @@ class _SearchPageState extends State<SearchPage> {
                   child: Padding(
                     padding: EdgeInsets.only(right: 15),
                     child: Icon(Icons.search,
-                        color: model.fontColor, size: 20.0),
+                        color: model.dark ? model.fontColor : Colors.white,
+                        size: 20.0),
                   ),
                 )
               ],
@@ -133,8 +134,11 @@ class _SearchPageState extends State<SearchPage> {
                 child: Column(
                   children: <Widget>[
                     _hotsearch(model),
+                    Padding(padding: EdgeInsets.only(top: 10)),
                     _wraplist(model),
+                    Padding(padding: EdgeInsets.only(top: 10)),
                     _searchhistory(model),
+                    Padding(padding: EdgeInsets.only(top: 10)),
                     _searchhistorycontent(model),
                   ],
                 ),
@@ -155,7 +159,7 @@ class _SearchPageState extends State<SearchPage> {
               fontSize: ScreenUtil().setSp(48),
               color: model.dark
                   ? model.fontColor
-                  : Theme.of(context).primaryColor),
+                  : Color.fromRGBO(15, 15, 15, model.dark ? 0.2 : 1)),
         ),
       ],
     );
@@ -165,20 +169,14 @@ class _SearchPageState extends State<SearchPage> {
   Widget _wraplist(BottomCatModel model) {
     if (_hotList.length != 0) {
       List<Widget> listWidget = List.generate(_hotList.length, (i) {
-        var random = Random(i);
-        var _color = Color.fromRGBO(random.nextInt(255), random.nextInt(255),
-            random.nextInt(255), model.dark ? 0.2 : 1);
         return FlatButton(
           onPressed: () => {startPageForResult(_hotList[i].name)},
           child: Text(_hotList[i].name),
-          color: _color,
-          textColor: model.fontColor,
-          shape: RoundedRectangleBorder(
-              side: BorderSide(
-                color: _color,
-                width: 1,
-              ),
-              borderRadius: BorderRadius.circular(5)),
+          color: Color.fromRGBO(248, 248, 248, model.dark ? 0.2 : 1),
+          textColor: model.dark
+              ? model.fontColor
+              : Color.fromRGBO(70, 70, 70, model.dark ? 0.2 : 1),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(9)),
         );
       });
       return Wrap(
@@ -205,7 +203,7 @@ class _SearchPageState extends State<SearchPage> {
                   fontSize: ScreenUtil().setSp(48),
                   color: model.dark
                       ? model.fontColor
-                      : Theme.of(context).primaryColor),
+                      : Color.fromRGBO(15, 15, 15, model.dark ? 0.2 : 1)),
             )
           ],
           mainAxisAlignment: MainAxisAlignment.start,
@@ -219,14 +217,12 @@ class _SearchPageState extends State<SearchPage> {
               mainAxisAlignment: MainAxisAlignment.end,
               children: <Widget>[
                 Icon(
-                  Icons.delete_forever,
+                  Icons.delete_outline,
                   size: 28,
-                  color: model.fontColor,
+                  color: model.dark
+                      ? model.fontColor
+                      : Colors.grey.withOpacity(model.dark ? 0.2 : 1),
                 ),
-                Text(
-                  "清空",
-                  style: TextStyle(color: model.fontColor),
-                )
               ],
             ),
           ),
@@ -271,8 +267,11 @@ class _SearchPageState extends State<SearchPage> {
                                   children: <Widget>[
                                     Icon(
                                       Icons.history,
-                                      size: 30,
-                                      color: model.fontColor,
+                                      size: 28,
+                                      color: model.dark
+                                          ? model.fontColor
+                                          : Colors.grey.withOpacity(
+                                              model.dark ? 0.2 : 1),
                                     ),
                                   ],
                                   mainAxisAlignment: MainAxisAlignment.start,
@@ -286,7 +285,10 @@ class _SearchPageState extends State<SearchPage> {
                                     _historyList[index],
                                     style: TextStyle(
                                         fontSize: ScreenUtil().setSp(38),
-                                        color: model.fontColor),
+                                        color: model.dark
+                                            ? model.fontColor
+                                            : Color.fromRGBO(70, 70, 70,
+                                                model.dark ? 0.2 : 1)),
                                   )
                                 ],
                               ),
@@ -306,7 +308,9 @@ class _SearchPageState extends State<SearchPage> {
       HotSearchBean hotSearchBean = HotSearchBean.fromJson(val);
       setState(() {
         _hotList.clear();
-        _hotList.addAll(hotSearchBean.data);
+        if (hotSearchBean != null && hotSearchBean.data != null) {
+          _hotList.addAll(hotSearchBean.data);
+        }
       });
     });
   }
@@ -328,7 +332,9 @@ class _SearchPageState extends State<SearchPage> {
     history = sharedPreferences.getStringList("historyList");
     setState(() {
       _historyList.clear();
-      _historyList.addAll(history);
+      if (history != null) {
+        _historyList.addAll(history);
+      }
     });
   }
 
@@ -341,7 +347,10 @@ class _SearchPageState extends State<SearchPage> {
   }
 
   startPageForResult(String str) {
-    App.router.navigateTo(context, "${Routers.searchDetail}?searchStr=${Uri.encodeComponent(str)}").then((result){
+    App.router
+        .navigateTo(context,
+            "${Routers.searchDetail}?searchStr=${Uri.encodeComponent(str)}")
+        .then((result) {
       if (result != null) {
         _searchContent = result;
         save();

@@ -8,7 +8,6 @@ import 'package:flutter_demo/pages/login_register_page.dart';
 import 'package:flutter_demo/pages/register_page.dart';
 import 'package:flutter_demo/pages/search_detail_page.dart';
 import 'package:flutter_demo/pages/search_screen.dart';
-import 'package:flutter_demo/pages/splash_page.dart';
 
 ///跳转到搜索
 var searchHandler =  Handler(

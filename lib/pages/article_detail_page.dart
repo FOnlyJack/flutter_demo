@@ -2,8 +2,10 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_webview_plugin/flutter_webview_plugin.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:provider/provider.dart';
 
 class ArticleDetailPage extends StatefulWidget {
   final String title;
@@ -59,8 +61,7 @@ class ArticleDetailPageState extends State<ArticleDetailPage> {
             loading = false;
           });
           if (isLoadingCallbackPage) {
-            // 当前是回调页面，则调用js方法获取数据
-            parseResult();
+           //调用js方法获取数据
           }
           break;
         case WebViewState.abortLoad:
@@ -73,46 +74,43 @@ class ArticleDetailPageState extends State<ArticleDetailPage> {
       });
     });
   }
-
-  // 解析WebView中的数据
-  void parseResult() {
-//    flutterWebViewPlugin.evalJavascript("get();").then((result) {
-//      // result json字符串，包含token信息
-//
-//    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return WebviewScaffold(
-      url: widget.url,
-      appBar: AppBar(
-        elevation: 0.1,
-        title: Text(
-          widget.title,
-          style: TextStyle(color: Colors.white),
-        ),
-        iconTheme: IconThemeData(color: Colors.white),
-        bottom: PreferredSize(
-          child: _progressBar(),
-          preferredSize: Size.fromHeight(2.0),
-        ),
-        actions: <Widget>[
-          IconButton(
-              icon: Icon(Icons.open_in_browser),
-              onPressed: () => launch(widget.url))
-        ],
-      ),
-      withZoom: false,
-      withLocalStorage: true,
-      withJavascript: true,
+    return Consumer<BottomCatModel>(
+      builder: (context, model, _) {
+        return WebviewScaffold(
+          url: widget.url,
+          appBar: AppBar(
+            elevation: 0.1,
+            title: Text(
+              widget.title,
+              style:
+                  TextStyle(color: model.dark ? model.fontColor : Colors.white),
+            ),
+            iconTheme: IconThemeData(
+                color: model.dark ? model.fontColor : Colors.white),
+            bottom: PreferredSize(
+              child: _progressBar(),
+              preferredSize: Size.fromHeight(2.5),
+            ),
+            actions: <Widget>[
+              IconButton(
+                  icon: Icon(Icons.open_in_browser),
+                  onPressed: () => launch(widget.url))
+            ],
+          ),
+          withZoom: false,
+          withLocalStorage: true,
+          withJavascript: true,
+        );
+      },
     );
   }
 
   ///页面加载进度
   Widget _progressBar() {
     return SizedBox(
-      height: loading ? 2 : 0,
+      height: loading ? 2.5 : 0,
       child: LinearProgressIndicator(
         value: loading ? _progress : 1,
         backgroundColor: Color(0xfff3f3f3),
