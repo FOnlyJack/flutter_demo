@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -34,6 +36,7 @@ class _SampleAppPageState extends State<HomeScreen>
   GlobalKey<RefreshFooterState> _footerKey = GlobalKey<RefreshFooterState>();
 
   ScrollController _scrollController;
+  SwiperController _swiperController;
 
   @override
   void initState() {
@@ -41,19 +44,31 @@ class _SampleAppPageState extends State<HomeScreen>
 
     loadHomeListData();
 
-    _scrollController = new ScrollController();
+    _swiperController = SwiperController();
+    _scrollController = ScrollController();
     _scrollController.addListener(() {
       double t = 1 - _scrollController.offset / DEFAULT_SCROLLER;
-      if (t < 0.0) {
+      if (t < 0.0 && Provider.of<BottomCatModel>(context).opacity != 0.0) {
         t = 0.0;
-      } else if (t > 1.0) {
+        Provider.of<BottomCatModel>(context).setOpacity(t);
+      } else if (t > 1.0 &&
+          Provider.of<BottomCatModel>(context).opacity != 1.0) {
         t = 1.0;
+        Provider.of<BottomCatModel>(context).setOpacity(t);
+      } else if (0.0 < t && t < 1.0) {
+        Provider.of<BottomCatModel>(context).setOpacity(t);
       }
-      Provider.of<BottomCatModel>(context).setOpacity(t);
+
       if (_scrollController.position.maxScrollExtent / (4 * _currentIndex + 1) >
-          _scrollController.offset) {
+              _scrollController.offset &&
+          Provider.of<BottomCatModel>(context).isShowActionButton != true) {
         Provider.of<BottomCatModel>(context).setIsShowActionButton(true);
-      } else {
+        _swiperController.startAutoplay();
+      } else if (_scrollController.position.maxScrollExtent /
+                  (4 * _currentIndex + 1) <=
+              _scrollController.offset &&
+          Provider.of<BottomCatModel>(context).isShowActionButton != false) {
+        _swiperController.stopAutoplay();
         Provider.of<BottomCatModel>(context).setIsShowActionButton(false);
       }
     });
@@ -63,6 +78,7 @@ class _SampleAppPageState extends State<HomeScreen>
   void dispose() {
     super.dispose();
     _scrollController.dispose();
+    _swiperController.dispose();
   }
 
   @override
@@ -128,7 +144,7 @@ class _SampleAppPageState extends State<HomeScreen>
                       child: CustomScrollView(
                         controller: _scrollController,
                         slivers: <Widget>[
-                          _banner(model),
+                          _banner(model, _swiperController),
                           PageList(
                             model: model,
                             listPage: _listPage,
@@ -277,7 +293,7 @@ Future<PaletteGenerator> _updatePaletteGenerator(String img) async {
 }
 
 ///首页轮播
-Widget _banner(BottomCatModel model) {
+Widget _banner(BottomCatModel model, SwiperController swiperController) {
   return SliverToBoxAdapter(
     child: FutureBuilder(
         future: request("homePageBanner"),
@@ -288,33 +304,34 @@ Widget _banner(BottomCatModel model) {
             return Container(
               margin: EdgeInsets.only(top: 10),
               width: ScreenUtil().width,
-              height: ScreenUtil().setHeight(450),
+              height: ScreenUtil().setHeight(350),
               child: RefreshSafeArea(
                 child: Swiper(
                   autoplayDelay: 5000,
                   layout: SwiperLayout.DEFAULT,
-                  viewportFraction: 0.8,
+                  viewportFraction: 0.9,
                   onTap: (i) {
                     App.router.navigateTo(context,
                         "${Routers.web}?title=${Uri.encodeComponent(bannerListData[i].title)}&url=${Uri.encodeComponent(bannerListData[i].url)}");
                   },
                   autoplayDisableOnInteraction: true,
-                  controller: new SwiperController(),
+                  controller: swiperController,
                   autoplay: true,
                   itemBuilder: (BuildContext context, int index) {
                     String url = bannerListData[index].imagePath;
                     return Container(
-                        margin: EdgeInsets.only(left: 10, right: 10),
-                        child: ClipRRect(
-                          child: Opacity(
-                            opacity: model.dark ? 0.3 : 1,
-                            child: CachedNetworkImage(
-                              fit: BoxFit.fill,
-                              imageUrl: url,
-                            ),
+                      margin: EdgeInsets.only(left: 10, right: 10),
+                      child: ClipRRect(
+                        child: Opacity(
+                          opacity: model.dark ? 0.3 : 1,
+                          child: CachedNetworkImage(
+                            fit: BoxFit.fill,
+                            imageUrl: url,
                           ),
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ));
+                        ),
+                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                      ),
+                    );
                   },
                   pagination: SwiperPagination(
                       builder: DotSwiperPaginationBuilder(
