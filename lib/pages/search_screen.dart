@@ -49,8 +49,8 @@ class _SearchPageState extends State<SearchPage> {
               title: Hero(
                   tag: "search",
                   child: Container(
+                      margin: EdgeInsets.only(bottom: 5,top: 5),
                       alignment: Alignment.center,
-                      height: ScreenUtil().setHeight(140),
                       child: Material(
                         color: Colors.transparent,
                         child: TextField(
@@ -60,30 +60,32 @@ class _SearchPageState extends State<SearchPage> {
                           textAlign: TextAlign.left,
                           cursorColor: model.fontColor,
                           style: TextStyle(
-                              color: model.fontColor,
+                              color: model.dark?model.fontColor:Colors.grey,
                               fontSize: ScreenUtil().setSp(42)),
                           maxLines: 1,
                           keyboardType: TextInputType.text,
                           decoration: InputDecoration(
+
                               suffix: Container(
-                                height: ScreenUtil().setHeight(60),
+                                height: ScreenUtil().setHeight(50),
                                 width: ScreenUtil().setWidth(120),
                                 alignment: Alignment.center,
                                 child: FlatButton(
                                   onPressed: () => {
                                     _textEditingController.clear(),
-                                    _focusNode.unfocus()
+                                    _focusNode.unfocus(),
                                   },
                                   child: Text(
                                     "x",
                                     style: TextStyle(
+                                        color: model.dark?model.fontColor:Colors.grey,
                                         fontSize: ScreenUtil().setSp(24)),
                                   ),
                                   color: Colors.transparent,
                                   textColor: model.fontColor,
                                   shape: CircleBorder(
                                     side: BorderSide(
-                                      color: model.fontColor,
+                                      color: model.dark?model.fontColor:Colors.grey,
                                       width: 1,
                                     ),
                                   ),
@@ -92,7 +94,7 @@ class _SearchPageState extends State<SearchPage> {
                               contentPadding: EdgeInsets.only(left: 20),
                               hintText: "搜索关键词以空格隔开",
                               hintStyle: TextStyle(
-                                  color: model.fontColor,
+                                  color: model.dark?model.fontColor:Colors.grey,
                                   fontSize: ScreenUtil().setSp(42)),
                               border: InputBorder.none),
                         ),

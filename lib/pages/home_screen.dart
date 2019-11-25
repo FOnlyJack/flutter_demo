@@ -47,16 +47,20 @@ class _SampleAppPageState extends State<HomeScreen>
     _swiperController = SwiperController();
     _scrollController = ScrollController();
     _scrollController.addListener(() {
-      double t = 1 - _scrollController.offset / DEFAULT_SCROLLER;
-      if (t < 0.0 && Provider.of<BottomCatModel>(context).opacity != 0.0) {
-        t = 0.0;
-        Provider.of<BottomCatModel>(context).setOpacity(t);
-      } else if (t > 1.0 &&
-          Provider.of<BottomCatModel>(context).opacity != 1.0) {
-        t = 1.0;
-        Provider.of<BottomCatModel>(context).setOpacity(t);
-      } else if (0.0 < t && t < 1.0) {
-        Provider.of<BottomCatModel>(context).setOpacity(t);
+      if (_scrollController.offset != 0.0) {
+        double t = 1 - _scrollController.offset / DEFAULT_SCROLLER;
+        if (t < 0.0 && Provider.of<BottomCatModel>(context).opacity != 0.0) {
+          t = 0.0;
+          Provider.of<BottomCatModel>(context).setOpacity(t);
+        } else if (t > 1.0 &&
+            Provider.of<BottomCatModel>(context).opacity != 1.0) {
+          t = 1.0;
+          Provider.of<BottomCatModel>(context).setOpacity(t);
+        } else if (0.0 < t && t < 1.0) {
+          Provider.of<BottomCatModel>(context).setOpacity(t);
+        }
+      } else if (_scrollController.offset == 0.0) {
+        Provider.of<BottomCatModel>(context).setOpacity(1);
       }
 
       if (_scrollController.position.maxScrollExtent / (4 * _currentIndex + 1) >
@@ -220,7 +224,7 @@ class _SampleAppPageState extends State<HomeScreen>
 /// 首页顶部搜索
 Widget _barSearch(context, BottomCatModel model) {
   return Container(
-      height: ScreenUtil().setHeight(140),
+      margin: EdgeInsets.only(bottom: 5, top: 5),
       child: Row(
         children: <Widget>[
           Expanded(
