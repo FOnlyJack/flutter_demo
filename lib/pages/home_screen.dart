@@ -42,6 +42,7 @@ class _SampleAppPageState extends State<HomeScreen>
   void initState() {
     super.initState();
 
+
     loadHomeListData();
 
     _swiperController = SwiperController();

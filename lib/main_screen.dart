@@ -4,6 +4,7 @@ import 'package:flutter_demo/pages/my_screen.dart';
 import 'package:flutter_demo/pages/project_screen.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'pages/home_screen.dart';
 import 'pages/navigation_screen.dart';
@@ -51,7 +52,18 @@ class _MainScreenState extends State<MainScreen> {
     ///我的
     MyScreen()
   ];
-
+  @override
+  void initState() {
+    super.initState();
+    init();
+  }
+  init() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    Provider.of<BottomCatModel>(context)
+        .setNightMode(!prefs.getBool("is_dark") ?? false);
+    Provider.of<BottomCatModel>(context)
+        .setIsLogin(prefs.get("isLogin") ?? false);
+  }
   @override
   Widget build(BuildContext context) {
     return Consumer<BottomCatModel>(

@@ -6,6 +6,7 @@ class BottomCatModel with ChangeNotifier {
   bool _dark = false;
   bool _isShowActionButton = true;
   double _opacity = 1.0;
+  bool _isLogin = false;
 
   ThemeData _themeData = ThemeData(
     primaryColor: Color(0xff2196f3),
@@ -35,6 +36,13 @@ class BottomCatModel with ChangeNotifier {
   double get opacity => _opacity;
 
   bool get dark => _dark;
+
+  bool get isLogin => _isLogin;
+
+  void setIsLogin(bool value) {
+    _isLogin = value;
+    notifyListeners();
+  }
 
   ///首页底部切换状态
   void setPageIndex(int currentIndex) {
