@@ -1,7 +1,6 @@
 ## 前言
 
 - 这是一款学习Flutter时写的WanAndroid客户端应用，仅供练习。
-- [项目地址](https://github.com/FOnlyJack/flutter_demo)，谢谢start一下哦
 
 ##  APP下载
 
@@ -46,7 +45,7 @@
 
 ##  感谢
 
-感谢鸿洋大神及[玩Android官网](http://www.wanandroid.com/)提供的[开放API](http://www.wanandroid.com/blog/show/2)
+感谢[玩Android官网](http://www.wanandroid.com/)提供的[开放API](http://www.wanandroid.com/blog/show/2)
 
 ## 使用的开源库
 
