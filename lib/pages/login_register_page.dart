@@ -1,17 +1,18 @@
 import 'dart:convert';
 import 'dart:ui';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_demo/mode/RegisterResultBean.dart';
-import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_demo/provider/bottom_cat_model.dart';
 import 'package:flutter_demo/routers/app.dart';
 import 'package:flutter_demo/routers/routers.dart';
+import 'package:provider/provider.dart';
+import 'package:flutter_demo/mode/RegisterResultBean.dart';
+import 'package:flutter_demo/net/service_method.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -31,6 +32,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
   VideoPlayerController _controller;
   bool isShowVideo = false;
   bool isShowLogin = true;
+  bool _isPlaying = false;
 
   AnimationController animationController;
   Animation<double> _translation;
@@ -46,18 +48,26 @@ class _LoginRegisterState extends State<LoginRegisterPage>
   void initState() {
     super.initState();
     _controller = VideoPlayerController.asset('assets/images/4.mp4')
-      ..setLooping(true)
+    ..setLooping(true)
+      ..setVolume(0)
+    // 播放状态
+      ..addListener(() {
+        final bool isPlaying = _controller.value.isPlaying;
+        if (isPlaying != _isPlaying) {
+          setState(() { _isPlaying = isPlaying; });
+        }
+      })
+    // 在初始化完成后必须更新界面
       ..initialize().then((_) {
-        // Ensure the first frame is shown after the video is initialized, even before the play button has been pressed.
         setState(() {
-          _controller.value.isPlaying
+          _isPlaying
               ? _controller.pause()
               : _controller.play();
         });
       });
     animationController = AnimationController(
       vsync: this,
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(seconds: 2),
     );
     _translation = Tween(begin: 0.0, end: 0.65).animate(
       CurvedAnimation(
@@ -90,11 +100,15 @@ class _LoginRegisterState extends State<LoginRegisterPage>
   Widget build(BuildContext context) {
     return WillPopScope(
         child: Consumer<BottomCatModel>(
-          builder: (context, model, _) {
+          builder: (context,model,_){
             return Scaffold(
+              backgroundColor: Colors.grey.withOpacity(0.2),
               body: Stack(
                 children: <Widget>[
-                  vedio(model),
+                  Offstage(
+                    offstage: false,
+                    child: vedio(model),
+                  ),
                   BackdropFilter(
                     filter: new ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                     child: new Container(
@@ -107,7 +121,7 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                       crossFadeState: isShowLogin
                           ? CrossFadeState.showFirst
                           : CrossFadeState.showSecond,
-                      duration: Duration(milliseconds: 800)),
+                      duration: Duration(seconds: 1)),
                 ],
               ),
             );
@@ -139,7 +153,9 @@ class _LoginRegisterState extends State<LoginRegisterPage>
                     child: RawMaterialButton(
                         elevation: 5,
                         fillColor: Colors.red,
-                        onPressed: () {},
+                        onPressed: () {
+                          setState(() {});
+                        },
                         shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.all(Radius.circular(5))),
                         child: Row(
@@ -549,10 +565,22 @@ class _LoginRegisterState extends State<LoginRegisterPage>
       setState(() {
         isShowLogin = false;
       });
+//      animationController.reset();
+//      _animation = Tween(begin: 0.0, end: 1.0).animate(
+//        CurvedAnimation(parent: animationController, curve: Curves.fastOutSlowIn),
+//      )..addStatusListener(
+//            (status) {
+//          if (status == AnimationStatus.completed) {
+//
+//          }
+//        },
+//      );
+//      animationController.forward();
     }
   }
 
   Future<bool> _requestPop() {
+    print("requestPop");
     if (!isShowLogin) {
       setState(() {
         isShowLogin = !isShowLogin;

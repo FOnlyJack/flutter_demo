@@ -7,7 +7,6 @@ import 'package:flutter_demo/routers/routers.dart';
 import 'package:provider/provider.dart';
 import 'package:flutter_demo/mode/HomePageListDataBean.dart';
 import 'package:flutter_demo/net/service_method.dart';
-import 'package:flutter_demo/pages/article_detail_page.dart';
 import 'package:flutter_easyrefresh/easy_refresh.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
